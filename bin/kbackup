@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+[[ -z $1 ]] && echo "No sources provided" && exit 1
+[[ -z $2 ]] && echo "No destination provided" && exit 1
+
+SOURCES="${@:1:$#-1}"
+DESTINATION="${@: -1}"
+
+for SOURCE in $SOURCES
+do
+    TARGET=`basename $SOURCE`
+    mkdir -pv $DESTINATION/$TARGET/.rbackup
+
+    CURRENT=`date -Is | head -c 19 | sed "s/:/-/g"`
+
+    if [[ -e $DESTINATION/$TARGET/.rbackup/last ]]
+    then
+        LAST=`cat $DESTINATION/$TARGET/.rbackup/last`
+        echo "> Rotating last backup: $DESTINATION/$TARGET/.rbackup/$LAST"
+        mkdir -pv $DESTINATION/$TARGET/.rbackup/$LAST
+        ls -A $DESTINATION/$TARGET | grep -v '.rbackup' | while read f; do echo "$DESTINATION/$TARGET/$f"; done \
+        | xargs -d '\n' cp -al -t $DESTINATION/$TARGET/.rbackup/$LAST
+    else
+        echo "> No existing backups"
+    fi
+
+    echo "> Backing up: $SOURCE -> $DESTINATION/$TARGET"
+    rsync -hav --delete --exclude .rbackup "$SOURCE/" "$DESTINATION/$TARGET" || (
+        [[ $LAST ]] &&
+        echo "> Cleaning up: $DESTINATION/$TARGET/.rbackup/$LAST" &&
+        rm -rf $DESTINATION/$TARGET/.rbackup/$LAST &&
+        exit 1
+    )
+
+    echo "$CURRENT" > $DESTINATION/$TARGET/.rbackup/last
+
+done
