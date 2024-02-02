@@ -9,7 +9,7 @@ kbackup --rentention 30d ~/mydata myserver:~/Backups
 A utility written to compliment `rsync` for backups. Specifically, while `rsync` can be used to make _mirrored_ backups,
 i.e exact clones of the target data, `kbackup` can be used to make _incremental_ backups which consist of snapshots of
 the target data. These snapshots can be taken as often as needed and they are cheap both in time and space. `kbackup`
-can optionally manage these snapshots for you, restore files to any stored versions and encrypt backups.
+can optionally manage these snapshots for you, restore files to earlier versions and encrypt backups.
 
 ## Features
 `kbackup` is built on top of `rsync` and borrows heavily from `rsnapshot`.
