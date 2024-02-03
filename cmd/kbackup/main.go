@@ -93,7 +93,7 @@ func run() error {
 		if err != nil {
 			return err
 		}
-		_, err = f.WriteString(currentTime.Format("2006-01-02T03-04-05"))
+		_, err = f.WriteString(currentTime.Format("2006-01-02T15-04-05"))
 		if err != nil {
 			return err
 		}
