@@ -1,8 +1,6 @@
 # kbackup
-Quick and easy incremental backups.
-
-`kbackup` is a reimplementation of the ideas in `rsnapshot` built with the composibility and simplicity of `rsync`
-in-mind. It can be used by-hand, in scripts or as part of a software system.
+Quick and easy incremental backups. A reimplementation of the ideas in `rsnapshot` built with the composibility and
+simplicity of `rsync` in-mind. It can be used by-hand, in scripts or as part of a software system.
 
 ```
 git clone git@github.com:thekashifmalik/kbackup.git
@@ -11,14 +9,14 @@ cd kbackup
 bin/kbackup ~/mydata myserver:~/backups
 ```
 
-This will create a mirror of `~/mydata` at the remote location `myserver:~/backups/mydata`. It will also rotate any
-pre-existing snapshots and associated metadata in `myserver:~/backups/mydata/.kbackup`.
+This will create a snapshot of `~/mydata` at the remote location `myserver:~/backups/mydata` as well as rotate any
+pre-existing snapshots in `myserver:~/backups/mydata/.kbackup`.
 
 ## About
-A utility written to compliment `rsync` for backups. Specifically, while `rsync` can be used to make _mirrored_ backups,
-i.e exact clones of the target data, `kbackup` can be used to make _incremental_ backups which consist of snapshots of
-the target data. These snapshots can be taken as often as needed and they are cheap both in time and space. `kbackup`
-can optionally manage these snapshots for you, restore files to earlier versions and encrypt backups.
+A utility to compliment `rsync` for backups. While `rsync` can be used to make _full_ backups, i.e exact clones of the
+target data, `kbackup` can be used to make _incremental_ backups which consist of snapshots of the target data. These
+snapshots can be taken as often as needed and they are cheap both in time and space. `kbackup` can also manage these
+snapshots, restore files to earlier versions and encrypt backups.
 
 ## Features
 `kbackup` is built on top of `rsync` and borrows heavily from `rsnapshot`.
@@ -27,14 +25,14 @@ can optionally manage these snapshots for you, restore files to earlier versions
 Whenever `kbackup` is run a copy of the last backup is stored in `.kbackup`. Backups are fully browsable.
 
 ### Differential
-`kbackup` uses `rsync` so only the actual differeces b/w files are sent over-the-wire.
+`kbackup` uses `rsync` so only the actual differeces between files are sent over-the-wire.
 
 ### Encrypted
 `kbackup` users `rsync` which uses `ssh` so all communication is encrypted. Addtionally backups can be encrypted on
 disk.
 
 ### Deduplicated
-`kbackup` uses the hard-link mechanism from `rsnapshot` so unchanged files b/w snapshots do not use any space.
+`kbackup` uses the hard-link mechanism from `rsnapshot` so unchanged files between snapshots do not use any space.
 
 ## Demo
 
@@ -81,3 +79,9 @@ kbackup --encrypt ~/mydata myserver:~/backups
 kbackup --encrypt-folder ~/mydata myserver:~/backups
 
 ```
+
+## References
+
+- https://rsync.samba.org/
+- https://rsnapshot.org/
+- http://www.mikerubel.org/computers/rsync_snapshots/
