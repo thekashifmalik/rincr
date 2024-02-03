@@ -69,7 +69,12 @@ func run() error {
 		}
 
 		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget)
-		cmd := exec.Command("rsync", "-hav", "--delete", "--exclude", ".kbackup", source+"/", destinationTarget)
+
+		rsyncBinary, err := exec.LookPath("rsync")
+		if err != nil {
+			return fmt.Errorf("Cannot find rsync binary: %w", err)
+		}
+		cmd := exec.Command(rsyncBinary, "-hav", "--delete", "--exclude", ".kbackup", source+"/", destinationTarget)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err = cmd.Run()
