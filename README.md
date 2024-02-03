@@ -1,16 +1,22 @@
 # kbackup
-Quick and easy incremental backups. A reimplementation of the ideas in `rsnapshot` built with the composibility and
-simplicity of `rsync` in-mind. It can be used by-hand, in scripts or as part of a software system.
+Quick and easy incremental backups.
 
+A reimplementation of the ideas in `rsnapshot` built with the composibility and simplicity of `rsync` in-mind. It can be
+used by-hand, in scripts or as part of a software system.
+
+## Quickstart
+Install the CLI by cloning the repository:
 ```
-git clone git@github.com:thekashifmalik/kbackup.git
+git clone git@github.com:thekashifmalik/kbackup
 cd kbackup
+```
 
+Create an incremental backup of `~/mydata` at the remote location `myserver:~/backups/mydata`:
+```
 bin/kbackup ~/mydata myserver:~/backups
 ```
 
-This will create a snapshot of `~/mydata` at the remote location `myserver:~/backups/mydata` as well as rotate any
-pre-existing snapshots in `myserver:~/backups/mydata/.kbackup`.
+Historical snapshots are stored in `myserver:~/backups/mydata/.kbackup`.
 
 ## About
 A utility to compliment `rsync` for backups. While `rsync` can be used to make _full_ backups, i.e exact clones of the
