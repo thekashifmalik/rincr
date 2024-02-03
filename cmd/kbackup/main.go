@@ -69,6 +69,7 @@ func run() error {
 
 		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget)
 		cmd := exec.Command("rsync", "-hav", "--delete", "--exclude", ".kbackup", source+"/", destinationTarget)
+		cmd.Stdout = os.Stderr
 		err = cmd.Run()
 		if err != nil {
 			if destinationLast != "" {
@@ -77,7 +78,6 @@ func run() error {
 			}
 			return err
 		}
-
 		f, err := os.Create(destinationTarget + "/.kbackup/last")
 		if err != nil {
 			return err
