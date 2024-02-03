@@ -1,5 +1,8 @@
 # kbackup
-A reimplementation of `rsnapshot` built with the composibility and simplicity of `rsync` in-mind.
+Quick and easy incremental backups.
+
+`kbackup` is a reimplementation of the ideas in `rsnapshot` built with the composibility and simplicity of `rsync`
+in-mind. It can be used by-hand, in scripts or as part of a software system.
 
 ```
 git clone git@github.com:thekashifmalik/kbackup.git
@@ -8,7 +11,8 @@ cd kbackup
 bin/kbackup ~/mydata myserver:~/backups
 ```
 
-
+This will create a mirror of `~/mydata` at the remote location `myserver:~/backups/mydata`. It will also rotate any
+pre-existing snapshots and associated metadata in `myserver:~/backups/mydata/.kbackup`.
 
 ## About
 A utility written to compliment `rsync` for backups. Specifically, while `rsync` can be used to make _mirrored_ backups,
@@ -58,19 +62,22 @@ $ ssh desktop-1 ls ~/Backups/mydata/.kbackup
 ## Unimplemented
 
 ```
+# Move off prototype
+kbackup ~/mydata myserver:~/backups
+
 # Manual pruning
-bin/kbackup prune --rentention 30d myserver:~/backups/mydata
+kbackup prune --rentention 30d myserver:~/backups/mydata
 
 # Automatic pruning
-bin/kbackup --rentention 30d ~/mydata myserver:~/backups
+kbackup --rentention 30d ~/mydata myserver:~/backups
 
 # Restoring files
-bin/kbackup restore --from 1w myserver:~/backups/mydata/file ~/mydata/file
+kbackup restore --from 1w myserver:~/backups/mydata/file ~/mydata/file
 
 # File encryption
-bin/kbackup --encrypt ~/mydata myserver:~/backups
+kbackup --encrypt ~/mydata myserver:~/backups
 
 # Folder encryption
-bin/kbackup --encrypt-folder ~/mydata myserver:~/backups
+kbackup --encrypt-folder ~/mydata myserver:~/backups
 
 ```
