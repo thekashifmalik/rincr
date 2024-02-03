@@ -10,29 +10,29 @@ DESTINATION="${@: -1}"
 for SOURCE in $SOURCES
 do
     TARGET=`basename $SOURCE`
-    mkdir -pv $DESTINATION/$TARGET/.rbackup
+    mkdir -pv $DESTINATION/$TARGET/.kbackup
 
     CURRENT=`date -Is | head -c 19 | sed "s/:/-/g"`
 
-    if [[ -e $DESTINATION/$TARGET/.rbackup/last ]]
+    if [[ -e $DESTINATION/$TARGET/.kbackup/last ]]
     then
-        LAST=`cat $DESTINATION/$TARGET/.rbackup/last`
-        echo "> Rotating last backup: $DESTINATION/$TARGET/.rbackup/$LAST"
-        mkdir -pv $DESTINATION/$TARGET/.rbackup/$LAST
-        ls -A $DESTINATION/$TARGET | grep -v '.rbackup' | while read f; do echo "$DESTINATION/$TARGET/$f"; done \
-        | xargs -d '\n' cp -al -t $DESTINATION/$TARGET/.rbackup/$LAST
+        LAST=`cat $DESTINATION/$TARGET/.kbackup/last`
+        echo "> Rotating last backup: $DESTINATION/$TARGET/.kbackup/$LAST"
+        mkdir -pv $DESTINATION/$TARGET/.kbackup/$LAST
+        ls -A $DESTINATION/$TARGET | grep -v '.kbackup' | while read f; do echo "$DESTINATION/$TARGET/$f"; done \
+        | xargs -d '\n' cp -al -t $DESTINATION/$TARGET/.kbackup/$LAST
     else
         echo "> No existing backups"
     fi
 
     echo "> Backing up: $SOURCE -> $DESTINATION/$TARGET"
-    rsync -hav --delete --exclude .rbackup "$SOURCE/" "$DESTINATION/$TARGET" || (
+    rsync -hav --delete --exclude .kbackup "$SOURCE/" "$DESTINATION/$TARGET" || (
         [[ $LAST ]] &&
-        echo "> Cleaning up: $DESTINATION/$TARGET/.rbackup/$LAST" &&
-        rm -rf $DESTINATION/$TARGET/.rbackup/$LAST &&
+        echo "> Cleaning up: $DESTINATION/$TARGET/.kbackup/$LAST" &&
+        rm -rf $DESTINATION/$TARGET/.kbackup/$LAST &&
         exit 1
     )
 
-    echo "$CURRENT" > $DESTINATION/$TARGET/.rbackup/last
+    echo "$CURRENT" > $DESTINATION/$TARGET/.kbackup/last
 
 done
