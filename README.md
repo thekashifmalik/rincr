@@ -5,15 +5,17 @@ A reimplementation of the ideas in `rsnapshot` built with the composibility and 
 used by-hand, in scripts or as part of a software system.
 
 ## Quickstart
-Install the CLI by cloning the repository:
+Grab the right binary for your OS and ARCH from [Github](https://github.com/thekashifmalik/kbackup). You can place this
+anywhere on your $PATH. For `linux` and `amd64` we do:
 ```
-git clone git@github.com:thekashifmalik/kbackup
-cd kbackup
+curl -L https://github.com/thekashifmalik/kbackup/releases/latest/download/kbackup-linux-amd64 > kbackup
+chmod +x kbackup
+mv kbackup ...
 ```
 
 Create an incremental backup of `~/mydata` at the remote location `myserver:~/backups/mydata`:
 ```
-bin/kbackup ~/mydata myserver:~/backups
+kbackup ~/mydata myserver:~/backups
 ```
 
 Historical snapshots are stored in `myserver:~/backups/mydata/.kbackup`.
@@ -66,9 +68,6 @@ $ ssh desktop-1 ls ~/Backups/mydata/.kbackup
 ## Unimplemented
 
 ```
-# Move off prototype
-kbackup ~/mydata myserver:~/backups
-
 # Manual pruning
 kbackup prune --rentention 30d myserver:~/backups/mydata
 
