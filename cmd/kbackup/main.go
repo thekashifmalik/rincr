@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -69,14 +70,19 @@ func run() error {
 
 		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget)
 		cmd := exec.Command("rsync", "-hav", "--delete", "--exclude", ".kbackup", source+"/", destinationTarget)
-		cmd.Stdout = os.Stderr
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		err = cmd.Run()
 		if err != nil {
+			errs := []error{fmt.Errorf("Error running rsync: %w", err)}
 			if destinationLast != "" {
 				fmt.Printf("> Cleaning up: %v\n", destinationLast)
-				os.RemoveAll(destinationLast)
+				err := os.RemoveAll(destinationLast)
+				if err != nil {
+					errs = append(errs, fmt.Errorf("Error cleaning up: %w", err))
+				}
 			}
-			return err
+			return errors.Join(errs...)
 		}
 		f, err := os.Create(destinationTarget + "/.kbackup/last")
 		if err != nil {
