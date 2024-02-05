@@ -17,15 +17,44 @@ func main() {
 	}
 }
 
+type Args struct {
+	sources     []string
+	destination string
+	prune       bool
+}
+
+func parseArgs() (*Args, error) {
+	args := []string{}
+	prune := false
+	for _, arg := range os.Args {
+		if arg == "--prune" {
+			prune = true
+		} else {
+			args = append(args, arg)
+		}
+	}
+	if len(args) < 2 {
+		return nil, fmt.Errorf("No sources provided")
+	}
+	if len(args) < 3 {
+		return nil, fmt.Errorf("No destination provided")
+	}
+	sources := args[1 : len(args)-1]
+	destination := args[len(args)-1]
+	return &Args{
+		sources:     sources,
+		destination: destination,
+		prune:       prune,
+	}, nil
+}
+
 func run() error {
-	if len(os.Args) < 2 {
-		return fmt.Errorf("No sources provided")
+	args, err := parseArgs()
+	if err != nil {
+		return err
 	}
-	if len(os.Args) < 3 {
-		return fmt.Errorf("No destination provided")
-	}
-	sources := os.Args[1 : len(os.Args)-1]
-	destination := os.Args[len(os.Args)-1]
+	sources := args.sources
+	destination := args.destination
 
 	for _, source := range sources {
 		currentTime := time.Now()
