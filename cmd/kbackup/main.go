@@ -7,7 +7,11 @@ import (
 	"os/exec"
 	"path/filepath"
 	"time"
+
+	"golang.org/x/exp/slices"
 )
+
+var TIME_FORMAT = "2006-01-02T15-04-05"
 
 func main() {
 	err := run()
@@ -122,7 +126,7 @@ func run() error {
 		if err != nil {
 			return err
 		}
-		_, err = f.WriteString(currentTime.Format("2006-01-02T15-04-05"))
+		_, err = f.WriteString(currentTime.Format(TIME_FORMAT))
 		if err != nil {
 			return err
 		}
@@ -130,6 +134,67 @@ func run() error {
 		if err != nil {
 			return err
 		}
+
+		if args.prune {
+			// Gather all existing backups
+			files, err := os.ReadDir(destinationTarget + "/.kbackup")
+			if err != nil {
+				return err
+			}
+			existingBackups := []time.Time{}
+			for _, file := range files {
+				name := file.Name()
+				if name != "last" {
+					backupTime, err := time.ParseInLocation(TIME_FORMAT, name, time.Local)
+					if err != nil {
+						return err
+					}
+					existingBackups = append(existingBackups, backupTime)
+				}
+			}
+			// Go through time buckets, keeping only the oldest backup from each bucket.
+			fmt.Printf("> Pruning backups in: %v\n", destinationTarget+"/.kbackup")
+			pruned, checkedTill := pruneBucket(existingBackups, currentTime, destinationTarget, 23, time.Hour)
+			pruned, checkedTill = pruneBucket(pruned, checkedTill, destinationTarget, 30, 24*time.Hour)
+			pruned, checkedTill = pruneBucket(pruned, checkedTill, destinationTarget, 12, 30*24*time.Hour)
+			pruned, checkedTill = pruneBucket(pruned, checkedTill, destinationTarget, 10, 12*30*24*time.Hour)
+		}
+
 	}
 	return nil
+}
+
+func pruneBucket(existingBackups []time.Time, currentTime time.Time, path string, num int, period time.Duration) ([]time.Time, time.Time) {
+	seen := []time.Time{}
+	checkTime := time.Time{}
+	for i := 0; i < num; i++ {
+		checkTime = currentTime.Add(time.Duration(i+1) * -period)
+		// fmt.Printf("> Checking %v: %v\n", period, checkTime)
+		// Gather backups that fit in this bucket
+		bucket := []time.Time{}
+		for _, backupTime := range existingBackups {
+			if !slices.Contains(seen, backupTime) && backupTime.After(checkTime) {
+				seen = append(seen, backupTime)
+				bucket = append(bucket, backupTime)
+			}
+		}
+		if len(bucket) == 0 {
+			// fmt.Printf("> No backups for: %v\n", checkTime)
+			continue
+		}
+		// Sort the backups and keep only the oldest one
+		slices.SortFunc(bucket, func(a, b time.Time) int { return a.Compare(b) })
+		for _, backupTime := range bucket[1:] {
+			fmt.Printf("> Pruning: %v\n", backupTime)
+			// TODO: Handle any errors here
+			os.RemoveAll(fmt.Sprintf("%v/.kbackup/%v", path, backupTime.Format(TIME_FORMAT)))
+		}
+	}
+	unseen := []time.Time{}
+	for _, backup := range existingBackups {
+		if !slices.Contains(seen, backup) {
+			unseen = append(unseen, backup)
+		}
+	}
+	return unseen, checkTime
 }
