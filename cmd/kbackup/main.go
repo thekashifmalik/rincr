@@ -154,47 +154,66 @@ func run() error {
 			}
 			// Go through time buckets, keeping only the oldest backup from each bucket.
 			fmt.Printf("> Pruning backups in: %v\n", destinationTarget+"/.kbackup")
-			pruned, checkedTill := pruneBucket(existingBackups, currentTime, destinationTarget, 23, time.Hour)
-			pruned, checkedTill = pruneBucket(pruned, checkedTill, destinationTarget, 30, 24*time.Hour)
-			pruned, checkedTill = pruneBucket(pruned, checkedTill, destinationTarget, 12, 30*24*time.Hour)
-			pruned, checkedTill = pruneBucket(pruned, checkedTill, destinationTarget, 10, 12*30*24*time.Hour)
+			pruned, checkedTill := pruneStage(existingBackups, roundToHour(currentTime.Add(-time.Hour)), destinationTarget, 23, time.Hour)
+			pruned, checkedTill = pruneStage(pruned, roundToDay(checkedTill), destinationTarget, 30, 24*time.Hour)
+			pruned, checkedTill = pruneStage(pruned, roundToMonth(checkedTill), destinationTarget, 12, 30*24*time.Hour)
+			pruned, checkedTill = pruneStage(pruned, roundToYear(checkedTill), destinationTarget, 10, 12*30*24*time.Hour)
 		}
 
 	}
 	return nil
 }
 
-func pruneBucket(existingBackups []time.Time, currentTime time.Time, path string, num int, period time.Duration) ([]time.Time, time.Time) {
-	seen := []time.Time{}
+func roundToHour(target time.Time) time.Time {
+	return time.Date(target.Year(), target.Month(), target.Day(), target.Hour(), 0, 0, 0, target.Location())
+}
+
+func roundToDay(target time.Time) time.Time {
+	return time.Date(target.Year(), target.Month(), target.Day(), 0, 0, 0, 0, target.Location())
+}
+
+func roundToMonth(target time.Time) time.Time {
+	return time.Date(target.Year(), target.Month(), 0, 0, 0, 0, 0, target.Location())
+}
+
+func roundToYear(target time.Time) time.Time {
+	return time.Date(target.Year(), 0, 0, 0, 0, 0, 0, target.Location())
+}
+
+func pruneStage(existingBackups []time.Time, currentTime time.Time, path string, num int, period time.Duration) ([]time.Time, time.Time) {
 	checkTime := time.Time{}
+	prunedBackups := existingBackups
 	for i := 0; i < num; i++ {
-		checkTime = currentTime.Add(time.Duration(i+1) * -period)
+		checkTime = currentTime.Add(time.Duration(i) * -period)
 		// fmt.Printf("> Checking %v: %v\n", period, checkTime)
 		// Gather backups that fit in this bucket
-		bucket := []time.Time{}
-		for _, backupTime := range existingBackups {
-			if !slices.Contains(seen, backupTime) && backupTime.After(checkTime) {
-				seen = append(seen, backupTime)
-				bucket = append(bucket, backupTime)
-			}
-		}
-		if len(bucket) == 0 {
-			// fmt.Printf("> No backups for: %v\n", checkTime)
-			continue
-		}
-		// Sort the backups and keep only the oldest one
-		slices.SortFunc(bucket, func(a, b time.Time) int { return a.Compare(b) })
-		for _, backupTime := range bucket[1:] {
-			fmt.Printf("> Pruning: %v\n", backupTime)
-			// TODO: Handle any errors here
-			os.RemoveAll(fmt.Sprintf("%v/.kbackup/%v", path, backupTime.Format(TIME_FORMAT)))
-		}
+		prunedBackups = pruneBucket(prunedBackups, checkTime, path)
 	}
+	return prunedBackups, checkTime
+}
+
+// This function needs to be run from the latest bucket to the oldest.
+func pruneBucket(existingBackups []time.Time, bucketTime time.Time, path string) []time.Time {
 	unseen := []time.Time{}
-	for _, backup := range existingBackups {
-		if !slices.Contains(seen, backup) {
-			unseen = append(unseen, backup)
+	// Gather backups that fit in this bucket
+	bucket := []time.Time{}
+	for _, backupTime := range existingBackups {
+		if backupTime.After(bucketTime) {
+			bucket = append(bucket, backupTime)
+		} else {
+			unseen = append(unseen, backupTime)
 		}
 	}
-	return unseen, checkTime
+	if len(bucket) == 0 {
+		// fmt.Printf("> No backups for: %v\n", bucketTime)
+		return existingBackups
+	}
+	// Sort the backups and keep only the oldest one
+	slices.SortFunc(bucket, func(a, b time.Time) int { return a.Compare(b) })
+	for _, backupTime := range bucket[1:] {
+		fmt.Printf("> Pruning: %v\n", backupTime)
+		// TODO: Handle any errors here
+		os.RemoveAll(fmt.Sprintf("%v/.kbackup/%v", path, backupTime.Format(TIME_FORMAT)))
+	}
+	return unseen
 }
