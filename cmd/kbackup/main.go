@@ -156,8 +156,8 @@ func run() error {
 			fmt.Printf("> Pruning backups in: %v\n", destinationTarget+"/.kbackup")
 			pruned, checkedTill := pruneStage(existingBackups, roundToHour(currentTime.Add(-time.Hour)), destinationTarget, 23, time.Hour)
 			pruned, checkedTill = pruneStage(pruned, roundToDay(checkedTill), destinationTarget, 30, 24*time.Hour)
-			pruned, checkedTill = pruneStage(pruned, roundToMonth(checkedTill), destinationTarget, 12, 30*24*time.Hour)
-			pruned, checkedTill = pruneStage(pruned, roundToYear(checkedTill), destinationTarget, 10, 12*30*24*time.Hour)
+			pruned, checkedTill = pruneMonthly(pruned, roundToMonth(checkedTill), destinationTarget, 12)
+			pruned, checkedTill = pruneYearly(pruned, roundToYear(checkedTill), destinationTarget, 10)
 		}
 
 	}
@@ -173,11 +173,11 @@ func roundToDay(target time.Time) time.Time {
 }
 
 func roundToMonth(target time.Time) time.Time {
-	return time.Date(target.Year(), target.Month(), 0, 0, 0, 0, 0, target.Location())
+	return time.Date(target.Year(), target.Month(), 1, 0, 0, 0, 0, target.Location())
 }
 
 func roundToYear(target time.Time) time.Time {
-	return time.Date(target.Year(), 0, 0, 0, 0, 0, 0, target.Location())
+	return time.Date(target.Year(), 1, 1, 0, 0, 0, 0, target.Location())
 }
 
 func pruneStage(existingBackups []time.Time, currentTime time.Time, path string, num int, period time.Duration) ([]time.Time, time.Time) {
@@ -186,6 +186,30 @@ func pruneStage(existingBackups []time.Time, currentTime time.Time, path string,
 	for i := 0; i < num; i++ {
 		checkTime = currentTime.Add(time.Duration(i) * -period)
 		// fmt.Printf("> Checking %v: %v\n", period, checkTime)
+		// Gather backups that fit in this bucket
+		prunedBackups = pruneBucket(prunedBackups, checkTime, path)
+	}
+	return prunedBackups, checkTime
+}
+
+func pruneMonthly(existingBackups []time.Time, currentTime time.Time, path string, num int) ([]time.Time, time.Time) {
+	checkTime := time.Time{}
+	prunedBackups := existingBackups
+	for i := 0; i < num; i++ {
+		checkTime = currentTime.AddDate(0, -i, 0)
+		// fmt.Printf("> Checking monthly: %v\n", checkTime)
+		// Gather backups that fit in this bucket
+		prunedBackups = pruneBucket(prunedBackups, checkTime, path)
+	}
+	return prunedBackups, checkTime
+}
+
+func pruneYearly(existingBackups []time.Time, currentTime time.Time, path string, num int) ([]time.Time, time.Time) {
+	checkTime := time.Time{}
+	prunedBackups := existingBackups
+	for i := 0; i < num; i++ {
+		checkTime = currentTime.AddDate(-i, 0, 0)
+		// fmt.Printf("> Checking yearly: %v\n", checkTime)
 		// Gather backups that fit in this bucket
 		prunedBackups = pruneBucket(prunedBackups, checkTime, path)
 	}
