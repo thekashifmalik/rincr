@@ -35,41 +35,9 @@ func run() error {
 		currentTime := time.Now()
 		target := filepath.Base(source)
 		destinationTarget := fmt.Sprintf("%v/%v", destination, target)
-		err := os.MkdirAll(destinationTarget+"/.kbackup", os.ModePerm)
+		destinationLast, err := internal.RotateLastBackup(destinationTarget)
 		if err != nil {
 			return err
-		}
-
-		var destinationLast string
-		b, err := os.ReadFile(destinationTarget + "/.kbackup/last")
-		if err == nil {
-			last := string(b)
-			destinationLast = fmt.Sprintf("%v/.kbackup/%v", destinationTarget, last)
-			fmt.Printf("> Rotating last backup: %v\n", destinationLast)
-			err := os.MkdirAll(destinationLast, os.ModePerm)
-			if err != nil {
-				return err
-			}
-
-			cpFiles := []string{}
-			targetFiles, err := os.ReadDir(destinationTarget)
-			if err != nil {
-				return err
-			}
-			for _, targetFile := range targetFiles {
-				name := targetFile.Name()
-				if name != ".kbackup" {
-					cpFiles = append(cpFiles, fmt.Sprintf("%v/%v", destinationTarget, name))
-				}
-			}
-			cmdArgs := append([]string{"-al", "-t", destinationLast}, cpFiles...)
-			cmd := exec.Command("cp", cmdArgs...)
-			err = cmd.Run()
-			if err != nil {
-				return err
-			}
-		} else {
-			fmt.Println("> No existing backups")
 		}
 
 		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget)

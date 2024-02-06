@@ -55,6 +55,9 @@ disk (NOT IMPLEMENTED YET).
 ### Deduplicated
 `kbackup` uses the hard-link mechanism from `rsnapshot` so unchanged files between snapshots do not use any space.
 
+### Bidirectional
+`kbackup` can backup from/to a local or remote location, just like `rsync` (NOT IMPLEMENTED YET).
+
 ## Demo
 
 ```
