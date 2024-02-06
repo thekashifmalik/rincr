@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"golang.org/x/exp/slices"
+
+	"github.com/thekashifmalik/kbackup/internal"
 )
 
 var TIME_FORMAT = "2006-01-02T15-04-05"
@@ -21,44 +23,13 @@ func main() {
 	}
 }
 
-type Args struct {
-	sources     []string
-	destination string
-	prune       bool
-}
-
-func parseArgs() (*Args, error) {
-	args := []string{}
-	prune := false
-	for _, arg := range os.Args {
-		if arg == "--prune" {
-			prune = true
-		} else {
-			args = append(args, arg)
-		}
-	}
-	if len(args) < 2 {
-		return nil, fmt.Errorf("No sources provided")
-	}
-	if len(args) < 3 {
-		return nil, fmt.Errorf("No destination provided")
-	}
-	sources := args[1 : len(args)-1]
-	destination := args[len(args)-1]
-	return &Args{
-		sources:     sources,
-		destination: destination,
-		prune:       prune,
-	}, nil
-}
-
 func run() error {
-	args, err := parseArgs()
+	args, err := internal.ParseArgs()
 	if err != nil {
 		return err
 	}
-	sources := args.sources
-	destination := args.destination
+	sources := args.Sources
+	destination := args.Destination
 
 	for _, source := range sources {
 		currentTime := time.Now()
@@ -135,7 +106,7 @@ func run() error {
 			return err
 		}
 
-		if args.prune {
+		if args.Prune {
 			// Gather all existing backups
 			files, err := os.ReadDir(destinationTarget + "/.kbackup")
 			if err != nil {
