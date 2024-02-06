@@ -20,11 +20,24 @@ kbackup ~/mydata myserver:~/backups
 
 Historical snapshots are stored in `myserver:~/backups/mydata/.kbackup`.
 
+If you also want to clean up older snapshots, pass the `--prune` option:
+```
+kbackup --prune ~/mydata myserver:~/backups
+```
+
+This will apply the default retention rules and keep:
+- 24 hourly backups
+- 30 daily backups
+- 12 monthly backups
+- 10 yearly backups
+
+Any pruned backups will be printed out.
+
 ## About
 A utility to compliment `rsync` for backups. While `rsync` can be used to make _full_ backups, i.e exact clones of the
 target data, `kbackup` can be used to make _incremental_ backups which consist of snapshots of the target data. These
 snapshots can be taken as often as needed and they are cheap both in time and space. `kbackup` can also manage these
-snapshots, restore files to earlier versions and encrypt backups.
+snapshots, restore files to earlier versions (NOT IMPLEMENTED YET) and encrypt backups (NOT IMPLEMENTED YET).
 
 ## Features
 `kbackup` is built on top of `rsync` and borrows heavily from `rsnapshot`.
@@ -33,11 +46,11 @@ snapshots, restore files to earlier versions and encrypt backups.
 Whenever `kbackup` is run a copy of the last backup is stored in `.kbackup`. Backups are fully browsable.
 
 ### Differential
-`kbackup` uses `rsync` so only the actual differeces between files are sent over-the-wire.
+`kbackup` uses `rsync` so only the actual differences between files are sent over-the-wire.
 
 ### Encrypted
-`kbackup` users `rsync` which uses `ssh` so all communication is encrypted. Addtionally backups can be encrypted on
-disk.
+`kbackup` uses `rsync` which uses `ssh` so all communication is encrypted. Addtionally backups can be encrypted on
+disk (NOT IMPLEMENTED YET).
 
 ### Deduplicated
 `kbackup` uses the hard-link mechanism from `rsnapshot` so unchanged files between snapshots do not use any space.
@@ -69,18 +82,18 @@ $ ssh desktop-1 ls ~/Backups/mydata/.kbackup
 
 ```
 # Manual pruning
-kbackup prune --rentention 30d myserver:~/backups/mydata
+kbackup prune myserver:~/backups/mydata
 
-# Automatic pruning
+# Overriding default rentention
 kbackup --rentention 30d ~/mydata myserver:~/backups
 
 # Restoring files
 kbackup restore --from 1w myserver:~/backups/mydata/file ~/mydata/file
 
-# File encryption
+# File encryption - supports deduplication but less secure
 kbackup --encrypt ~/mydata myserver:~/backups
 
-# Folder encryption
+# Folder encryption - no deduplication but completely secure
 kbackup --encrypt-folder ~/mydata myserver:~/backups
 
 ```
