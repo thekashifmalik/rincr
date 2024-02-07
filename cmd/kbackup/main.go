@@ -21,17 +21,15 @@ func main() {
 }
 
 func run() error {
+	if internal.ParseVersion() {
+		fmt.Printf("kbackup %v\n", version)
+		return nil
+	}
 	args, err := internal.ParseArgs()
 	if err != nil {
 		return err
 	}
-
-	if args.Version {
-		fmt.Printf("kbackup %v\n", version)
-		return nil
-	}
 	sources := args.Sources
-
 	for _, source := range sources {
 		currentTime := time.Now()
 		target := filepath.Base(source)

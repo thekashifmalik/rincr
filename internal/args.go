@@ -9,18 +9,23 @@ type Args struct {
 	Sources     []string
 	Destination string
 	Prune       bool
-	Version     bool
+}
+
+func ParseVersion() bool {
+	for _, arg := range os.Args {
+		if arg == "--version" {
+			return true
+		}
+	}
+	return false
 }
 
 func ParseArgs() (*Args, error) {
 	args := []string{}
 	prune := false
-	version := false
 	for _, arg := range os.Args {
 		if arg == "--prune" {
 			prune = true
-		} else if arg == "--version" {
-			version = true
 		} else {
 			args = append(args, arg)
 		}
@@ -37,6 +42,5 @@ func ParseArgs() (*Args, error) {
 		Sources:     sources,
 		Destination: destination,
 		Prune:       prune,
-		Version:     version,
 	}, nil
 }
