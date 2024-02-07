@@ -23,8 +23,10 @@ Create an incremental backup of `~/mydata` at the remote location `myserver:~/ba
 kbackup ~/mydata myserver:~/backups
 ```
 
-Every time this command is run, the last backup (if any) is rotated and changes are synced. If you also want to clean up
-older backups, pass the `--prune` option:
+When this command is run the last backup (if any) is rotated and new changes are synced. Hard links and SSH is used
+where possible.
+
+If you also want to clean up older backups, pass the `--prune` option:
 ```
 kbackup --prune ~/mydata myserver:~/backups
 ```
@@ -46,7 +48,6 @@ kbackup server1:~/mydata server2:~/otherdata ~/backups
 ```
 This will create incremental backups in `~/backups/mydata` and `~/backups/otherdata`.
 
-
 ## About
 A utility to compliment `rsync` for backups. While `rsync` can be used to make _full_ backups, i.e exact clones of the
 target data, `kbackup` can be used to make _incremental_ backups which consist of snapshots of the target data. These
@@ -63,7 +64,8 @@ Whenever `kbackup` is run a copy of the last backup is stored in `.kbackup`. Bac
 `kbackup` uses `rsync` so only the actual differences between files are sent over-the-wire.
 
 ### Deduplicated
-`kbackup` uses the hard-link mechanism from `rsnapshot` so unchanged files between snapshots do not use any space.
+`kbackup` uses the same hard-link mechanism that `rsnapshot` uses so unchanged files between snapshots do not use any
+storage space.
 
 ### Bidirectional
 `kbackup` can backup from (pull) or to (push) a remote location, just like `rsync`.
