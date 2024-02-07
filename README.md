@@ -5,8 +5,8 @@ A reimplementation of the ideas in `rsnapshot` built with the composibility and 
 used by-hand, in scripts or as part of a software system.
 
 ## Quickstart
-Grab the right binary for your OS and ARCH from [Github](https://github.com/thekashifmalik/kbackup). You can place this
-anywhere on your $PATH. For `linux` and `amd64` we do:
+Grab the right binary for your OS and ARCH from [Github](https://github.com/thekashifmalik/kbackup). Place this anywhere
+in your path after making sure it is executable. For `linux` and `amd64` we do:
 ```
 curl -L https://github.com/thekashifmalik/kbackup/releases/latest/download/kbackup-linux-amd64 > kbackup
 chmod +x kbackup
@@ -48,15 +48,16 @@ Whenever `kbackup` is run a copy of the last backup is stored in `.kbackup`. Bac
 ### Differential
 `kbackup` uses `rsync` so only the actual differences between files are sent over-the-wire.
 
-### Encrypted
-`kbackup` uses `rsync` which uses `ssh` so all communication is encrypted. Addtionally backups can be encrypted on
-disk (NOT IMPLEMENTED YET).
-
 ### Deduplicated
 `kbackup` uses the hard-link mechanism from `rsnapshot` so unchanged files between snapshots do not use any space.
 
 ### Bidirectional
-`kbackup` can backup from/to a local or remote location, just like `rsync` (NOT IMPLEMENTED YET).
+`kbackup` can backup from (pull) or to (push) a remote location, just like `rsync`.
+
+### Encrypted
+`kbackup` uses `rsync` and `ssh` so all communication is encrypted. Addtionally backups can be encrypted on disk
+(NOT IMPLEMENTED YET).
+
 
 ## Demo
 
