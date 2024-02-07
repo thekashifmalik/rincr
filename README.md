@@ -1,16 +1,21 @@
 # kbackup
-Quick and easy incremental backups.
+Quick and easy incremental backups. A reimplementation of the ideas in `rsnapshot` built with the composibility and
+simplicity of `rsync` in-mind.
 
-A reimplementation of the ideas in `rsnapshot` built with the composibility and simplicity of `rsync` in-mind. It can be
-used by-hand, in scripts or as part of a software system.
-
-## Quickstart
+## Installation
 Grab the right binary for your OS and ARCH from [Github](https://github.com/thekashifmalik/kbackup). Place this anywhere
-in your path after making sure it is executable. For `linux` and `amd64` we do:
+in your path and make sure it is executable. For `linux` and `amd64` we do:
 ```
 curl -L https://github.com/thekashifmalik/kbackup/releases/latest/download/kbackup-linux-amd64 > kbackup
 chmod +x kbackup
 mv kbackup ...
+```
+
+## Quickstart
+`kbackup` supports a similar interface to `rsync`:
+
+```
+kbackup [HOST:]SRC... [HOST:]DEST
 ```
 
 Create an incremental backup of `~/mydata` at the remote location `myserver:~/backups/mydata`:
@@ -18,20 +23,29 @@ Create an incremental backup of `~/mydata` at the remote location `myserver:~/ba
 kbackup ~/mydata myserver:~/backups
 ```
 
-Historical snapshots are stored in `myserver:~/backups/mydata/.kbackup`.
-
-If you also want to clean up older snapshots, pass the `--prune` option:
+Every time this command is run, the last backup (if any) is rotated and changes are synced. If you also want to clean up
+older backups, pass the `--prune` option:
 ```
 kbackup --prune ~/mydata myserver:~/backups
 ```
 
-This will apply the default retention rules and keep:
+This will apply the default retention rules and delete extra backups. Pruned backups will be printed out. The default
+retention rules are:
 - 24 hourly backups
 - 30 daily backups
 - 12 monthly backups
 - 10 yearly backups
 
-Any pruned backups will be printed out.
+Historical backups are kept in `myserver:~/backups/mydata/.kbackup`. They are fully browsable and take no extra space
+for unchanged files.
+
+
+We can also back up locally from remote locations:
+```
+kbackup server1:~/mydata server2:~/otherdata ~/backups
+```
+This will create incremental backups in `~/backups/mydata` and `~/backups/otherdata`.
+
 
 ## About
 A utility to compliment `rsync` for backups. While `rsync` can be used to make _full_ backups, i.e exact clones of the
