@@ -10,6 +10,8 @@ import (
 	"github.com/thekashifmalik/kbackup/internal"
 )
 
+var version string
+
 func main() {
 	err := run()
 	if err != nil {
@@ -22,6 +24,11 @@ func run() error {
 	args, err := internal.ParseArgs()
 	if err != nil {
 		return err
+	}
+
+	if args.Version {
+		fmt.Printf("kbackup %v\n", version)
+		return nil
 	}
 	sources := args.Sources
 
