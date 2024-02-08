@@ -15,7 +15,7 @@ mv kbackup ...
 `kbackup` supports a similar interface to `rsync`:
 
 ```
-kbackup [HOST:]SRC... [HOST:]DEST
+kbackup [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
 ```
 
 Create an incremental backup of `~/mydata` at the remote location `myserver:~/backups/mydata`:
