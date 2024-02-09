@@ -122,3 +122,6 @@ kbackup --encrypt-folder ~/mydata myserver:~/backups
 - [rsync](https://rsync.samba.org/)
 - [rsnapshot](https://rsnapshot.org/)
 - [Easy Automated Snapshot-Style Backups with Linux and Rsync](http://www.mikerubel.org/computers/rsync_snapshots/)
+- [Blog File](blog/test.md)
+- [Blog Index](blogi)
+- [Blog README](blogr)
