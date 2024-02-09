@@ -6,9 +6,9 @@ SEMVER_REGEX='^v[0-9]+\.[0-9]+\.[0-9]+$'
 
 [[ -z $2 ]] && echo "must pass in release description " && exit 1
 
-bin/clean
-bin/build
-
 git tag $1
 git push --all
+
+bin/clean
+bin/build
 gh release create $1 --notes "$2" build/*
