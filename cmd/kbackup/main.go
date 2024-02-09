@@ -12,6 +12,19 @@ import (
 
 var version string
 
+var HELP = `kbackup
+
+Usage:
+  kbackup [--prune] [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
+  kbackup (-h | --help)
+  kbackup --version
+
+Options:
+  -h --help     Show this screen.
+  --version     Show version.
+  --prune    	Prune backups after operation.
+`
+
 func main() {
 	err := run()
 	if err != nil {
@@ -23,6 +36,10 @@ func main() {
 func run() error {
 	if internal.ParseVersion() {
 		fmt.Printf("kbackup %v\n", version)
+		return nil
+	}
+	if internal.ParseHelp() {
+		fmt.Print(HELP)
 		return nil
 	}
 	args, err := internal.ParseArgs()
