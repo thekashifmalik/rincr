@@ -11,15 +11,6 @@ type Args struct {
 	Prune       bool
 }
 
-func ParseHelp() bool {
-	for _, arg := range os.Args {
-		if arg == "--help" || arg == "-h" {
-			return true
-		}
-	}
-	return false
-}
-
 func ParseArgs() (*Args, error) {
 	args := []string{}
 	prune := false

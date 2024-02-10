@@ -39,7 +39,7 @@ func run() error {
 		fmt.Printf("kbackup %v\n", version)
 		return nil
 	}
-	if internal.ParseHelp() {
+	if args.ParseHelp(os.Args) {
 		fmt.Print(HELP)
 		return nil
 	}
