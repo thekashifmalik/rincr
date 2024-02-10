@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/thekashifmalik/kbackup/internal"
+	"github.com/thekashifmalik/kbackup/internal/args"
 )
 
 var version string
@@ -34,7 +35,7 @@ func main() {
 }
 
 func run() error {
-	if internal.ParseVersion() {
+	if args.ParseVersion(os.Args) {
 		fmt.Printf("kbackup %v\n", version)
 		return nil
 	}

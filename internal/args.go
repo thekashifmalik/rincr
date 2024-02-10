@@ -11,15 +11,6 @@ type Args struct {
 	Prune       bool
 }
 
-func ParseVersion() bool {
-	for _, arg := range os.Args {
-		if arg == "--version" {
-			return true
-		}
-	}
-	return false
-}
-
 func ParseHelp() bool {
 	for _, arg := range os.Args {
 		if arg == "--help" || arg == "-h" {
