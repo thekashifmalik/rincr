@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-VERSION=`git tag --sort=-version:refname | head -n 1`
+VERSION=`bin/version`
 
 env GOOS=linux GOARCH=amd64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-linux-amd64 cmd/kbackup/main.go
 env GOOS=linux GOARCH=arm64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-linux-arm64 cmd/kbackup/main.go
