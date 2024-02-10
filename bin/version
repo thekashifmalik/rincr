@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -eo pipefail
+git tag --sort=-version:refname | head -n 1
