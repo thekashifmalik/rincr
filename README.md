@@ -7,7 +7,7 @@ Grab the right binary for your OS and ARCH from [Github](https://github.com/thek
 in your path and make sure it is executable. For `linux` and `amd64` we do:
 ```
 curl -L https://github.com/thekashifmalik/kbackup/releases/latest/download/kbackup-linux-amd64 > kbackup
-chmod +x kbackup
+chmod u+x kbackup
 mv kbackup ...
 ```
 
