@@ -1,4 +1,4 @@
-# kbackup Blog
+# Blog
 
 ## Drafts
 - [Prototypes](prototypes)
