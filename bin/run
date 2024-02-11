@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 set -eo pipefail
-exec go run -ldflags "-X main.version=`bin/version`" cmd/rincr/main.go "$@"
+
+LDFLAGS="-X $(bin/module)/internal.VERSION=$(bin/version)"
+exec go run -ldflags "$LDFLAGS" cmd/rincr/main.go "$@"

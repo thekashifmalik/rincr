@@ -11,21 +11,6 @@ import (
 	"github.com/thekashifmalik/rincr/internal/args"
 )
 
-var version string
-
-var HELP = fmt.Sprintf(`%[1]v %[2]v
-
-Usage:
-  %[1]v [--prune] [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
-  %[1]v (-h | --help)
-  %[1]v --version
-
-Options:
-  -h --help     Show this screen.
-  --version     Show version.
-  --prune    	Prune backups after operation.
-`, internal.NAME, version)
-
 func main() {
 	err := run()
 	if err != nil {
@@ -36,11 +21,11 @@ func main() {
 
 func run() error {
 	if args.ParseVersion(os.Args) {
-		fmt.Printf("%v %v\n", internal.NAME, version)
+		internal.PrintVersion()
 		return nil
 	}
 	if args.ParseHelp(os.Args) {
-		fmt.Print(HELP)
+		internal.PrintHelp()
 		return nil
 	}
 	args, err := internal.ParseArgs()
