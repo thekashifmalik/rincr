@@ -13,18 +13,18 @@ import (
 
 var version string
 
-var HELP = `kbackup
+var HELP = fmt.Sprintf(`%[1]v %[2]v
 
 Usage:
-  kbackup [--prune] [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
-  kbackup (-h | --help)
-  kbackup --version
+  %[1]v [--prune] [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
+  %[1]v (-h | --help)
+  %[1]v --version
 
 Options:
   -h --help     Show this screen.
   --version     Show version.
   --prune    	Prune backups after operation.
-`
+`, internal.NAME, version)
 
 func main() {
 	err := run()
@@ -36,7 +36,7 @@ func main() {
 
 func run() error {
 	if args.ParseVersion(os.Args) {
-		fmt.Printf("kbackup %v\n", version)
+		fmt.Printf("%v %v\n", internal.NAME, version)
 		return nil
 	}
 	if args.ParseHelp(os.Args) {
