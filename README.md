@@ -70,8 +70,8 @@ Create an incremental backup of `~/mydata` at the remote location `myserver:~/ba
 kbackup ~/mydata myserver:~/backups
 ```
 
-When this command is run the last backup (if any) is rotated and new changes are synced. Hard links and SSH is used
-where possible.
+When this command is run `rincr` checks to see if there are existing backups at the destination. If there are, a copy of
+the latest backup is created using hard links. Then new changes (if any) are synced from the source.
 
 If you also want to clean up older backups, pass the `--prune` option:
 ```
@@ -85,14 +85,15 @@ retention rules are:
 - 12 monthly backups
 - 10 yearly backups
 
-Historical backups are kept in `myserver:~/backups/mydata/.kbackup`. They are fully browsable and take no extra space
-for unchanged files.
-
+Incremental backups are kept in `myserver:~/backups/mydata/.kbackup`. They are fully browsable and take no extra space
+for files that have not changed between versions. Each file acts as a full-backup and can be copied back out manually to
+restore data.
 
 We can also back up locally from remote locations:
 ```
 kbackup server1:~/mydata server2:~/otherdata ~/backups
 ```
+
 This will create incremental backups in `~/backups/mydata` and `~/backups/otherdata`.
 
 
