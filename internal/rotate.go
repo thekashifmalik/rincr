@@ -59,12 +59,16 @@ func RotateLastBackup(dest *Destination) (string, error) {
 		}
 		destinationLast = fmt.Sprintf("%v/.kbackup/%v", destination, last)
 		fmt.Printf("> Rotating last backup: %v\n", destinationLast)
-		err = exec.Command("ssh", dest.RemoteHost, "mkdir", "-p", destinationLast).Run()
+		cmd := exec.Command("ssh", dest.RemoteHost, "mkdir", "-p", destinationLast)
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
 		if err != nil {
 			return destinationLast, err
 		}
 
-		targetFilesRaw, err := exec.Command("ssh", dest.RemoteHost, "ls", "-A", destination).Output()
+		cmd = exec.Command("ssh", dest.RemoteHost, "ls", "-A", destination)
+		cmd.Stderr = os.Stderr
+		targetFilesRaw, err := cmd.Output()
 		if err != nil {
 			return destinationLast, err
 		}
@@ -79,7 +83,10 @@ func RotateLastBackup(dest *Destination) (string, error) {
 		}
 
 		cpCmd := fmt.Sprintf(`"cp -al %v %v"`, strings.Join(cpFiles, " "), destinationLast)
-		cmd := exec.Command("ssh", dest.RemoteHost, "bash", "-c", cpCmd)
+		cmd = exec.Command("ssh", dest.RemoteHost, "bash", "-c", cpCmd)
+		if os.Getenv("DEBUG") != "" {
+			cmd.Stderr = os.Stderr
+		}
 		return destinationLast, cmd.Run()
 	}
 }
