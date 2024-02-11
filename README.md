@@ -34,10 +34,11 @@ rincr --version
 > risk.
 
 ## About
-A utility to compliment `rsync` for backups. While `rsync` can be used to make _full_ backups, i.e exact clones of the
-target data, `rincr` can be used to make _incremental_ backups which consist of snapshots of the target data. These
-snapshots can be taken as often as needed and they are cheap both in time and space. `rincr` can also manage these
-snapshots, restore files to earlier versions (NOT IMPLEMENTED YET) and encrypt backups (NOT IMPLEMENTED YET).
+A utility to compliment `rsync` for backups. While `rsync` can be used to make _mirrored_ backups `rincr` can be used to
+make _incremental_ backups which consist of a mirror and historical snapshots of the target data. These snapshots are
+taken whenever data is backed up and this can be done as often as needed as it is cheap both in time and space. `rincr`
+can also manage these snapshots, restore files to earlier versions (NOT IMPLEMENTED YET) and encrypt backups (NOT
+IMPLEMENTED YET).
 
 ## Features
 `rincr` is built on top of `rsync` and borrows heavily from `rsnapshot`.
