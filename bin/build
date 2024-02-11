@@ -3,12 +3,12 @@ set -eo pipefail
 
 VERSION=`bin/version`
 
-env GOOS=linux GOARCH=amd64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-linux-amd64 cmd/kbackup/main.go
-env GOOS=linux GOARCH=arm64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-linux-arm64 cmd/kbackup/main.go
-env GOOS=linux GOARCH=arm go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-linux-arm cmd/kbackup/main.go
-env GOOS=darwin GOARCH=amd64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-darwin-amd64 cmd/kbackup/main.go
-env GOOS=darwin GOARCH=arm64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-darwin-arm64 cmd/kbackup/main.go
+env GOOS=linux GOARCH=amd64 go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-linux-amd64 cmd/rincr/main.go
+env GOOS=linux GOARCH=arm64 go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-linux-arm64 cmd/rincr/main.go
+env GOOS=linux GOARCH=arm go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-linux-arm cmd/rincr/main.go
+env GOOS=darwin GOARCH=amd64 go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-darwin-amd64 cmd/rincr/main.go
+env GOOS=darwin GOARCH=arm64 go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-darwin-arm64 cmd/rincr/main.go
 # TODO: Enable windows builds once we add native Go support for making links.
-# env GOOS=windows GOARCH=amd64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-windows-amd64 cmd/kbackup/main.go
-# env GOOS=windows GOARCH=arm64 go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-windows-arm64 cmd/kbackup/main.go
-# env GOOS=windows GOARCH=arm go build -v -ldflags "-X main.version=$VERSION" -o build/kbackup-windows-arm cmd/kbackup/main.go
+# env GOOS=windows GOARCH=amd64 go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-windows-amd64 cmd/rincr/main.go
+# env GOOS=windows GOARCH=arm64 go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-windows-arm64 cmd/rincr/main.go
+# env GOOS=windows GOARCH=arm go build -v -ldflags "-X main.version=$VERSION" -o build/rincr-windows-arm cmd/rincr/main.go
