@@ -2,8 +2,8 @@
 Quick and easy incremental backups. A reimplementation of the ideas in `rsnapshot` built with the composibility and
 simplicity of `rsync` in-mind.
 
-> **Note**: This software is not yet stable; there may be backwards-incompatible changes before v1. Use at your own
-> risk.
+> **Note**: This project was previously called *kbackup*. See this [issue](https://github.com/thekashifmalik/kbackup/issues/2)
+> for more information.
 
 ## Installation
 Grab the right binary for your OS and Architecture from [Github](https://github.com/thekashifmalik/rincr/releases).
@@ -29,6 +29,9 @@ Test that it works:
 ```bash
 rincr --version
 ```
+
+> **Note**: This software is not yet stable; there may be backwards-incompatible changes before v1. Use at your own
+> risk.
 
 ## About
 A utility to compliment `rsync` for backups. While `rsync` can be used to make _full_ backups, i.e exact clones of the
