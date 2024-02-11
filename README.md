@@ -21,7 +21,7 @@ Make sure it is executable and then place it anywhere in your `$PATH`:
 
 ```bash
 chmod +x kbackup
-mv kbackup ~/bin/kbackup
+mv kbackup ~/bin/kbackup # Use whatever location you put your user binaries in.
 ```
 
 Test that it works:
