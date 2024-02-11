@@ -8,7 +8,7 @@ import (
 
 func WriteLastFile(timestamp string, destination *Destination) error {
 	if destination.RemoteHost == "" {
-		f, err := os.Create(destination.Path + "/.kbackup/last")
+		f, err := os.Create(destination.Path + LAST_FILE_PATH)
 		if err != nil {
 			return err
 		}
@@ -21,7 +21,7 @@ func WriteLastFile(timestamp string, destination *Destination) error {
 			return err
 		}
 	} else {
-		echoCmd := fmt.Sprintf(`"echo %v > %v"`, timestamp, destination.RemotePath+"/.kbackup/last")
+		echoCmd := fmt.Sprintf(`"echo %v > %v"`, timestamp, destination.RemotePath+LAST_FILE_PATH)
 		cmd := exec.Command("ssh", destination.RemoteHost, "bash", "-c", echoCmd)
 		err := cmd.Run()
 		if err != nil {

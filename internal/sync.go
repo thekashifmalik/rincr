@@ -11,7 +11,7 @@ func SyncBackup(source string, destination string) error {
 	if err != nil {
 		return fmt.Errorf("Cannot find rsync binary: %w", err)
 	}
-	cmd := exec.Command(rsyncBinary, "-hav", "--delete", "--exclude", ".kbackup", source+"/", destination)
+	cmd := exec.Command(rsyncBinary, "-hav", "--delete", "--exclude", BACKUPS_DIR, source+"/", destination)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()

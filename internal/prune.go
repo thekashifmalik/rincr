@@ -13,7 +13,7 @@ func Prune(destination *Destination, currentTime time.Time) error {
 	// Gather all existing backups
 	files := []string{}
 	if destination.RemoteHost == "" {
-		entries, err := os.ReadDir(destination.Path + "/.kbackup")
+		entries, err := os.ReadDir(destination.Path + BACKUPS_DIR_PATH)
 		if err != nil {
 			return err
 		}
@@ -21,7 +21,7 @@ func Prune(destination *Destination, currentTime time.Time) error {
 			files = append(files, entry.Name())
 		}
 	} else {
-		_filesRaw, err := exec.Command("ssh", destination.RemoteHost, "ls", "-A", destination.RemotePath+"/.kbackup").Output()
+		_filesRaw, err := exec.Command("ssh", destination.RemoteHost, "ls", "-A", destination.RemotePath+BACKUPS_DIR_PATH).Output()
 		if err != nil {
 			return err
 		}
@@ -43,7 +43,7 @@ func Prune(destination *Destination, currentTime time.Time) error {
 		}
 	}
 	// Go through time buckets, keeping only the oldest backup from each bucket.
-	fmt.Printf("> Pruning backups in: %v\n", destination.Path+"/.kbackup")
+	fmt.Printf("> Pruning backups in: %v\n", destination.Path+BACKUPS_DIR_PATH)
 	pruned, checkedTill := pruneStage(existingBackups, roundToHour(currentTime.Add(-time.Hour)), destination, 23, time.Hour)
 	pruned, checkedTill = pruneStage(pruned, roundToDay(checkedTill), destination, 30, 24*time.Hour)
 	pruned, checkedTill = pruneMonthly(pruned, roundToMonth(checkedTill), destination, 12)
@@ -125,9 +125,9 @@ func pruneBucket(existingBackups []time.Time, bucketTime time.Time, destination 
 		fmt.Printf("> Pruning: %v\n", backupTime)
 		// TODO: Handle any errors here
 		if destination.RemoteHost == "" {
-			os.RemoveAll(fmt.Sprintf("%v/.kbackup/%v", destination.Path, backupTime.Format(TIME_FORMAT)))
+			os.RemoveAll(fmt.Sprintf("%v/%v/%v", destination.Path, BACKUPS_DIR, backupTime.Format(TIME_FORMAT)))
 		} else {
-			remotePath := fmt.Sprintf("%v/.kbackup/%v", destination.RemotePath, backupTime.Format(TIME_FORMAT))
+			remotePath := fmt.Sprintf("%v/%v/%v", destination.RemotePath, BACKUPS_DIR, backupTime.Format(TIME_FORMAT))
 			exec.Command("ssh", destination.RemoteHost, "rm", "-rf", remotePath).Run()
 		}
 	}

@@ -10,19 +10,19 @@ import (
 func RotateLastBackup(dest *Destination) (string, error) {
 	if dest.RemoteHost == "" {
 		destination := dest.Path
-		err := os.MkdirAll(destination+"/.kbackup", os.ModePerm)
+		err := os.MkdirAll(destination+BACKUPS_DIR_PATH, os.ModePerm)
 		if err != nil {
 			return "", err
 		}
 
 		var destinationLast string
-		b, err := os.ReadFile(destination + "/.kbackup/last")
+		b, err := os.ReadFile(destination + LAST_FILE_PATH)
 		if err != nil {
 			fmt.Println("> No existing backups")
 			return "", nil
 		}
 		last := string(b)
-		destinationLast = fmt.Sprintf("%v/.kbackup/%v", destination, last)
+		destinationLast = fmt.Sprintf("%v/%v/%v", destination, BACKUPS_DIR, last)
 		fmt.Printf("> Rotating last backup: %v\n", destinationLast)
 		err = os.MkdirAll(destinationLast, os.ModePerm)
 		if err != nil {
@@ -36,7 +36,7 @@ func RotateLastBackup(dest *Destination) (string, error) {
 		}
 		for _, targetFile := range targetFiles {
 			name := targetFile.Name()
-			if name != ".kbackup" {
+			if name != BACKUPS_DIR {
 				cpFiles = append(cpFiles, fmt.Sprintf("%v/%v", destination, name))
 			}
 		}
@@ -45,19 +45,19 @@ func RotateLastBackup(dest *Destination) (string, error) {
 		return destinationLast, cmd.Run()
 	} else {
 		destination := dest.RemotePath
-		err := exec.Command("ssh", dest.RemoteHost, "mkdir", "-p", destination+"/.kbackup").Run()
+		err := exec.Command("ssh", dest.RemoteHost, "mkdir", "-p", destination+BACKUPS_DIR_PATH).Run()
 		if err != nil {
 			return "", err
 		}
 
 		var destinationLast string
-		b, err := exec.Command("ssh", dest.RemoteHost, "cat", destination+"/.kbackup/last").Output()
+		b, err := exec.Command("ssh", dest.RemoteHost, "cat", destination+LAST_FILE_PATH).Output()
 		last := string(b)
 		if err != nil || last == "" {
 			fmt.Println("> No existing backups")
 			return "", nil
 		}
-		destinationLast = fmt.Sprintf("%v/.kbackup/%v", destination, last)
+		destinationLast = fmt.Sprintf("%v/%v/%v", destination, BACKUPS_DIR, last)
 		fmt.Printf("> Rotating last backup: %v\n", destinationLast)
 		cmd := exec.Command("ssh", dest.RemoteHost, "mkdir", "-p", destinationLast)
 		cmd.Stderr = os.Stderr
@@ -77,7 +77,7 @@ func RotateLastBackup(dest *Destination) (string, error) {
 
 		cpFiles := []string{}
 		for _, targetFile := range targetFiles {
-			if targetFile != ".kbackup" && targetFile != "" {
+			if targetFile != BACKUPS_DIR && targetFile != "" {
 				cpFiles = append(cpFiles, fmt.Sprintf(`'%v/%v'`, destination, targetFile))
 			}
 		}
