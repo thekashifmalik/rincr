@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/thekashifmalik/kbackup/internal"
-	"github.com/thekashifmalik/kbackup/internal/args"
+	"github.com/thekashifmalik/rincr/internal"
+	"github.com/thekashifmalik/rincr/internal/args"
 )
 
 var version string

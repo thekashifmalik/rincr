@@ -1,4 +1,4 @@
-module github.com/thekashifmalik/kbackup
+module github.com/thekashifmalik/rincr
 
 go 1.21
 

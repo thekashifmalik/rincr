@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/thekashifmalik/kbackup/internal/args"
+	"github.com/thekashifmalik/rincr/internal/args"
 )
 
 func TestParseVersion(t *testing.T) {
