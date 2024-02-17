@@ -1,14 +1,11 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
-	"time"
 
-	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/help"
+	"github.com/thekashifmalik/rincr/internal/root"
 	"github.com/thekashifmalik/rincr/internal/version"
 )
 
@@ -21,7 +18,6 @@ func main() {
 }
 
 func run() error {
-
 	if version.ArgExists(os.Args) {
 		version.PrintWithName()
 		return nil
@@ -30,46 +26,9 @@ func run() error {
 		help.Print()
 		return nil
 	}
-	args, err := internal.ParseArgs()
+	root, err := root.ParseArgs(os.Args)
 	if err != nil {
 		return err
 	}
-	sources := args.Sources
-	for _, source := range sources {
-		currentTime := time.Now()
-		target := filepath.Base(source)
-		destinationTarget := internal.ParseDestination(fmt.Sprintf("%v/%v", args.Destination, target))
-		if err != nil {
-			return err
-		}
-		destinationLast, err := internal.RotateLastBackup(destinationTarget)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget.Path)
-
-		err = internal.SyncBackup(source, destinationTarget.Path)
-		if err != nil {
-			errs := []error{err}
-			if destinationLast != "" {
-				err := internal.Clean(destinationTarget, destinationLast)
-				if err != nil {
-					errs = append(errs, err)
-				}
-			}
-			return errors.Join(errs...)
-		}
-
-		timeString := currentTime.Format(internal.TIME_FORMAT)
-		internal.WriteLastFile(timeString, destinationTarget)
-
-		if args.Prune {
-			err := internal.Prune(destinationTarget, currentTime)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
+	return root.Run()
 }
