@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/thekashifmalik/rincr/internal/args"
+	"github.com/thekashifmalik/rincr/internal/backup"
 	"github.com/thekashifmalik/rincr/internal/help"
 	"github.com/thekashifmalik/rincr/internal/root"
 	"github.com/thekashifmalik/rincr/internal/version"
@@ -18,6 +19,10 @@ func main() {
 	}
 }
 
+type Command interface {
+	Run() error
+}
+
 func run() error {
 	if version.ArgExists(os.Args) {
 		version.PrintWithName()
@@ -28,9 +33,16 @@ func run() error {
 		return nil
 	}
 	parsedArgs := args.Parse(os.Args)
-	root, err := root.Parse(parsedArgs)
+	cmd, err := getCommand(parsedArgs)
 	if err != nil {
 		return err
 	}
-	return root.Run()
+	return cmd.Run()
+}
+
+func getCommand(parsedArgs *args.Parsed) (Command, error) {
+	if parsedArgs.Params[0] == "backup" {
+		return backup.Parse(parsedArgs)
+	}
+	return root.Parse(parsedArgs)
 }
