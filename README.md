@@ -1,6 +1,5 @@
 # rincr
-Quick and easy incremental backups. A reimplementation of the ideas in `rsnapshot` built with the composibility and
-simplicity of `rsync` in-mind.
+`rsync`-based incremental backups.
 
 > **Note**: This project was previously called *kbackup*. See this [issue](https://github.com/thekashifmalik/kbackup/issues/2)
 > for more information.
@@ -34,11 +33,12 @@ rincr --version
 > risk.
 
 ## About
-A utility to compliment `rsync` for backups. While `rsync` can be used to make _mirrored_ backups `rincr` can be used to
-make _incremental_ backups which consist of a mirror and historical snapshots of the target data. These snapshots are
-taken whenever data is backed up and this can be done as often as needed as it is cheap both in time and space. `rincr`
-can also manage these snapshots, restore files to earlier versions (NOT IMPLEMENTED YET) and encrypt backups (NOT
-IMPLEMENTED YET).
+A reimplementation of the ideas in `rsnapshot` built with the composibility and simplicity of `rsync` in-mind. This
+utility is meant to compliment `rsync` for backups. While `rsync` can be used to make _mirrored_ backups `rincr` can be
+used to make _incremental_ backups which consist of a mirror and historical snapshots of the target data. These
+snapshots are taken whenever data is backed up and this can be done as often as needed as it is cheap both in time and
+space. `rincr` can also manage these snapshots, restore files to earlier versions (NOT IMPLEMENTED YET) and encrypt
+backups (NOT IMPLEMENTED YET).
 
 ## Features
 `rincr` is built on top of `rsync` and borrows heavily from `rsnapshot`.
