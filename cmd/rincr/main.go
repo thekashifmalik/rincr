@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"github.com/thekashifmalik/rincr/internal"
-	"github.com/thekashifmalik/rincr/internal/args"
+	"github.com/thekashifmalik/rincr/internal/help"
+	"github.com/thekashifmalik/rincr/internal/version"
 )
 
 func main() {
@@ -20,12 +21,13 @@ func main() {
 }
 
 func run() error {
-	if args.ParseVersion(os.Args) {
-		internal.PrintVersion()
+
+	if version.ArgExists(os.Args) {
+		version.PrintWithName()
 		return nil
 	}
-	if args.ParseHelp(os.Args) {
-		internal.PrintHelp()
+	if help.ArgExists(os.Args) {
+		help.Print()
 		return nil
 	}
 	args, err := internal.ParseArgs()
