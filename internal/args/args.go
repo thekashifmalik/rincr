@@ -1,15 +1,21 @@
 package args
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 type Parsed struct {
 	Params  []string
 	Options []string
 }
 
-func Parse(args []string) *Parsed {
+func Parse(args []string) (*Parsed, error) {
 	// We drop the 1st argument since it is the name of the running binary.
 	commandArgs := args[1:]
+	if len(commandArgs) == 0 {
+		return nil, fmt.Errorf("no arguments given")
+	}
 	params := []string{}
 	options := []string{}
 	for _, arg := range commandArgs {
@@ -22,5 +28,5 @@ func Parse(args []string) *Parsed {
 	return &Parsed{
 		Params:  params,
 		Options: options,
-	}
+	}, nil
 }

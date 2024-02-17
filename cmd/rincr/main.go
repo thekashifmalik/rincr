@@ -19,10 +19,6 @@ func main() {
 	}
 }
 
-type Command interface {
-	Run() error
-}
-
 func run() error {
 	if version.ArgExists(os.Args) {
 		version.PrintWithName()
@@ -32,17 +28,21 @@ func run() error {
 		help.Print()
 		return nil
 	}
-	parsedArgs := args.Parse(os.Args)
-	cmd, err := getCommand(parsedArgs)
+	parsedArgs, err := args.Parse(os.Args)
+	if err != nil {
+		help.Print()
+		return nil
+	}
+	if parsedArgs.Params[0] == "backup" {
+		cmd, err := backup.Parse(parsedArgs)
+		if err != nil {
+			return err
+		}
+		return cmd.Run()
+	}
+	cmd, err := root.Parse(parsedArgs)
 	if err != nil {
 		return err
 	}
 	return cmd.Run()
-}
-
-func getCommand(parsedArgs *args.Parsed) (Command, error) {
-	if parsedArgs.Params[0] == "backup" {
-		return backup.Parse(parsedArgs)
-	}
-	return root.Parse(parsedArgs)
 }
