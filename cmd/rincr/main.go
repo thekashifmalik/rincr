@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/thekashifmalik/rincr/internal/args"
 	"github.com/thekashifmalik/rincr/internal/help"
 	"github.com/thekashifmalik/rincr/internal/root"
 	"github.com/thekashifmalik/rincr/internal/version"
@@ -26,7 +27,8 @@ func run() error {
 		help.Print()
 		return nil
 	}
-	root, err := root.ParseArgs(os.Args)
+	parsedArgs := args.Parse(os.Args)
+	root, err := root.Parse(parsedArgs)
 	if err != nil {
 		return err
 	}

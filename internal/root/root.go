@@ -4,43 +4,38 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"time"
 
 	"github.com/thekashifmalik/rincr/internal"
+	"github.com/thekashifmalik/rincr/internal/args"
 )
 
-type Args struct {
+type Command struct {
 	Sources     []string
 	Destination string
 	Prune       bool
 }
 
-func ParseArgs(args []string) (*Args, error) {
-	locations := []string{}
-	prune := false
-	for _, arg := range args {
-		if arg == "--prune" {
-			prune = true
-		} else {
-			locations = append(locations, arg)
-		}
-	}
-	if len(locations) < 2 {
+func Parse(args *args.Parsed) (*Command, error) {
+	prune := slices.Contains(args.Options, "--prune")
+	numParams := len(args.Params)
+	if numParams < 1 {
 		return nil, fmt.Errorf("No sources provided")
 	}
-	if len(locations) < 3 {
+	if numParams < 2 {
 		return nil, fmt.Errorf("No destination provided")
 	}
-	sources := locations[1 : len(locations)-1]
-	destination := locations[len(locations)-1]
-	return &Args{
+	sources := args.Params[:numParams-1]
+	destination := args.Params[numParams-1]
+	return &Command{
 		Sources:     sources,
 		Destination: destination,
 		Prune:       prune,
 	}, nil
 }
 
-func (a *Args) Run() error {
+func (a *Command) Run() error {
 	sources := a.Sources
 	for _, source := range sources {
 		currentTime := time.Now()
