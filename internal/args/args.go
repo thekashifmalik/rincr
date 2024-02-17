@@ -30,3 +30,7 @@ func Parse(args []string) (*Parsed, error) {
 		Options: options,
 	}, nil
 }
+
+func (p *Parsed) LeftShift() {
+	p.Params = p.Params[1:]
+}
