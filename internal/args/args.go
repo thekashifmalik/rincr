@@ -11,11 +11,11 @@ type Parsed struct {
 }
 
 func Parse(args []string) (*Parsed, error) {
-	// We drop the 1st argument since it is the name of the running binary.
-	commandArgs := args[1:]
-	if len(commandArgs) == 0 {
+	if len(args) <= 1 {
 		return nil, fmt.Errorf("no arguments given")
 	}
+	// We drop the 1st argument since it is the name of the running binary.
+	commandArgs := args[1:]
 	params := []string{}
 	options := []string{}
 	for _, arg := range commandArgs {
