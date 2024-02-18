@@ -8,6 +8,7 @@ import (
 	"github.com/thekashifmalik/rincr/internal/backup"
 	"github.com/thekashifmalik/rincr/internal/help"
 	"github.com/thekashifmalik/rincr/internal/prune"
+	"github.com/thekashifmalik/rincr/internal/restore"
 	"github.com/thekashifmalik/rincr/internal/version"
 )
 
@@ -41,6 +42,12 @@ func run() error {
 		return cmd.Run()
 	} else if parsedArgs.Params[0] == "prune" {
 		cmd, err := prune.Parse(parsedArgs)
+		if err != nil {
+			return err
+		}
+		return cmd.Run()
+	} else if parsedArgs.Params[0] == "restore" {
+		cmd, err := restore.Parse(parsedArgs)
 		if err != nil {
 			return err
 		}
