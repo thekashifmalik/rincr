@@ -99,7 +99,7 @@ rincr prune myserver:~/backups/mydata
 
 Incremental backups are kept in `myserver:~/backups/mydata/.rincr`. They are fully browsable and take no extra space
 for files that have not changed between versions. Each file acts as a full-backup and can be copied back out manually to
-restore data.
+restore data to an older version.
 
 We can also back up locally from remote locations:
 ```bash
