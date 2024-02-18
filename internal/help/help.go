@@ -2,6 +2,7 @@ package help
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/version"
@@ -19,9 +20,9 @@ Options:
   --prune    	Prune backups after operation.
 `, internal.NAME)
 
-func Print() {
-	version.PrintWithName()
-	fmt.Print(HELP)
+func Print(writer io.Writer) {
+	version.PrintWithName(writer)
+	fmt.Fprint(writer, HELP)
 }
 
 func ArgExists(args []string) bool {

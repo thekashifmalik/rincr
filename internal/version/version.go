@@ -2,14 +2,15 @@ package version
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/thekashifmalik/rincr/internal"
 )
 
 var VERSION string
 
-func PrintWithName() {
-	fmt.Printf("%v %v\n", internal.NAME, VERSION)
+func PrintWithName(writer io.Writer) {
+	fmt.Fprintf(writer, "%v %v\n", internal.NAME, VERSION)
 }
 
 func ArgExists(args []string) bool {

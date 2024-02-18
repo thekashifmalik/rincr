@@ -22,16 +22,16 @@ func main() {
 
 func run() error {
 	if version.ArgExists(os.Args) {
-		version.PrintWithName()
+		version.PrintWithName(os.Stdout)
 		return nil
 	}
 	if help.ArgExists(os.Args) {
-		help.Print()
+		help.Print(os.Stdout)
 		return nil
 	}
 	parsedArgs, err := args.Parse(os.Args)
 	if err != nil {
-		help.Print()
+		help.Print(os.Stdout)
 		return nil
 	}
 	if parsedArgs.Params[0] == "backup" {
