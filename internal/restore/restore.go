@@ -7,7 +7,7 @@ import (
 )
 
 func Restore(repository *repository.Repository, path string, output string) error {
-	if !repository.IsValid() {
+	if !repository.Exists() {
 		return fmt.Errorf("No repository found")
 	}
 	fmt.Println("repository.IsRemote()")

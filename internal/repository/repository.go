@@ -64,7 +64,7 @@ func (r *Repository) PathExists(path string) bool {
 	}
 }
 
-func (r *Repository) IsValid() bool {
+func (r *Repository) Exists() bool {
 	return r.PathExists(internal.BACKUPS_DIR)
 }
 

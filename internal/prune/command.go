@@ -28,7 +28,7 @@ func (c *Command) Run() error {
 		currentTime := time.Now()
 		// TODO: Replace Destination with Repository.
 		repo := repository.NewRepository(destinationTarget)
-		if !repo.IsValid() {
+		if !repo.Exists() {
 			fmt.Printf("No repository found, skipping: %v\n", destinationTarget)
 			continue
 		}
