@@ -10,6 +10,7 @@ import (
 	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/args"
 	"github.com/thekashifmalik/rincr/internal/prune"
+	"github.com/thekashifmalik/rincr/internal/repository"
 )
 
 type Command struct {
@@ -69,7 +70,9 @@ func (a *Command) Run() error {
 		writeLastFile(timeString, destinationTarget)
 
 		if a.Prune {
-			err := prune.Prune(destinationTarget, currentTime)
+			// TODO: Replace Destination with Repository.
+			repo := repository.NewRepository(destinationTarget.Path)
+			err := prune.Prune(repo, destinationTarget, currentTime)
 			if err != nil {
 				return err
 			}

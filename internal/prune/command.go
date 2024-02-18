@@ -33,7 +33,7 @@ func (c *Command) Run() error {
 			continue
 		}
 		destinationTarget := internal.ParseDestination(destinationTarget)
-		err := Prune(destinationTarget, currentTime)
+		err := Prune(repo, destinationTarget, currentTime)
 		if err != nil {
 			return err
 		}

@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/thekashifmalik/rincr/internal"
 )
@@ -72,3 +73,39 @@ func (r *Repository) Exists() bool {
 // 	// historicalPath := 0
 // 	return r.PathExists(path)
 // }
+
+func (r *Repository) GetBackupTimes() ([]time.Time, error) {
+	backupsDirPath := r.GetPath() + internal.BACKUPS_DIR_PATH
+	files := []string{}
+	if r.IsRemote() {
+		_filesRaw, err := exec.Command("ssh", r.GetHost(), "ls", "-A", backupsDirPath).Output()
+		if err != nil {
+			return nil, err
+		}
+		_files := strings.Split(string(_filesRaw), "\n")
+		for _, file := range _files {
+			if file != "" {
+				files = append(files, file)
+			}
+		}
+	} else {
+		entries, err := os.ReadDir(backupsDirPath)
+		if err != nil {
+			return nil, err
+		}
+		for _, entry := range entries {
+			files = append(files, entry.Name())
+		}
+	}
+	backupTimes := []time.Time{}
+	for _, file := range files {
+		if file != "last" {
+			backupTime, err := time.ParseInLocation(internal.TIME_FORMAT, file, time.Local)
+			if err != nil {
+				return nil, err
+			}
+			backupTimes = append(backupTimes, backupTime)
+		}
+	}
+	return backupTimes, nil
+}

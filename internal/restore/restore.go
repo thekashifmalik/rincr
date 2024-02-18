@@ -13,6 +13,11 @@ func Restore(repository *repository.Repository, path string, output string) erro
 	fmt.Println("repository.IsRemote()")
 	fmt.Println(repository.IsRemote())
 	fmt.Println("repository.PathExists(path)")
-	fmt.Println(repository.PathExists(path))
+	existsLatest := repository.PathExists(path)
+	fmt.Println(existsLatest)
+	if !existsLatest {
+		fmt.Println("repository.GetBackupTimes()")
+		fmt.Println(repository.GetBackupTimes())
+	}
 	return nil
 }

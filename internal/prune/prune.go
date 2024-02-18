@@ -5,44 +5,16 @@ import (
 	"os"
 	"os/exec"
 	"slices"
-	"strings"
 	"time"
 
 	"github.com/thekashifmalik/rincr/internal"
+	"github.com/thekashifmalik/rincr/internal/repository"
 )
 
-func Prune(destination *internal.Destination, currentTime time.Time) error {
-	// Gather all existing backups
-	files := []string{}
-	if destination.RemoteHost == "" {
-		entries, err := os.ReadDir(destination.Path + internal.BACKUPS_DIR_PATH)
-		if err != nil {
-			return err
-		}
-		for _, entry := range entries {
-			files = append(files, entry.Name())
-		}
-	} else {
-		_filesRaw, err := exec.Command("ssh", destination.RemoteHost, "ls", "-A", destination.RemotePath+internal.BACKUPS_DIR_PATH).Output()
-		if err != nil {
-			return err
-		}
-		_files := strings.Split(string(_filesRaw), "\n")
-		for _, file := range _files {
-			if file != "" {
-				files = append(files, file)
-			}
-		}
-	}
-	existingBackups := []time.Time{}
-	for _, file := range files {
-		if file != "last" {
-			backupTime, err := time.ParseInLocation(internal.TIME_FORMAT, file, time.Local)
-			if err != nil {
-				return err
-			}
-			existingBackups = append(existingBackups, backupTime)
-		}
+func Prune(repository *repository.Repository, destination *internal.Destination, currentTime time.Time) error {
+	existingBackups, err := repository.GetBackupTimes()
+	if err != nil {
+		return err
 	}
 	// Go through time buckets, keeping only the oldest backup from each bucket.
 	fmt.Printf("> Pruning backups in: %v\n", destination.Path+internal.BACKUPS_DIR_PATH)
