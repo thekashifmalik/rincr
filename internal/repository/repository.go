@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/thekashifmalik/rincr/internal"
 )
 
 type Repository struct {
@@ -61,3 +63,12 @@ func (r *Repository) PathExists(path string) bool {
 		return false
 	}
 }
+
+func (r *Repository) IsValid() bool {
+	return r.PathExists(internal.BACKUPS_DIR)
+}
+
+// func (r *Repository) PathExistsHistorical(path string, when time.Time) bool {
+// 	// historicalPath := 0
+// 	return r.PathExists(path)
+// }

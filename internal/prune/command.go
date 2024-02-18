@@ -6,6 +6,7 @@ import (
 
 	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/args"
+	"github.com/thekashifmalik/rincr/internal/repository"
 )
 
 type Command struct {
@@ -25,6 +26,12 @@ func Parse(args *args.Parsed) (*Command, error) {
 func (c *Command) Run() error {
 	for _, destinationTarget := range c.DestinationTargets {
 		currentTime := time.Now()
+		// TODO: Replace Destination with Repository.
+		repo := repository.NewRepository(destinationTarget)
+		if !repo.IsValid() {
+			fmt.Printf("No repository found, skipping: %v\n", destinationTarget)
+			continue
+		}
 		destinationTarget := internal.ParseDestination(destinationTarget)
 		err := Prune(destinationTarget, currentTime)
 		if err != nil {
