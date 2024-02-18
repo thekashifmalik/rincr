@@ -22,7 +22,13 @@ func (r *Repository) IsRemote() bool {
 }
 
 func (r *Repository) GetHost() string {
-	return r.parse()[0]
+	if r.IsRemote() {
+		return r.parse()[0]
+	} else {
+		// TODO: Consider returning an error in this case; we should never be using the host when the repository is
+		// local.
+		return ""
+	}
 }
 
 func (r *Repository) GetPath() string {
