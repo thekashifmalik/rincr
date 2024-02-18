@@ -36,8 +36,7 @@ func Parse(args *args.Parsed) (*Command, error) {
 }
 
 func (a *Command) Run() error {
-	sources := a.Sources
-	for _, source := range sources {
+	for _, source := range a.Sources {
 		currentTime := time.Now()
 		target := filepath.Base(source)
 		destinationTarget := internal.ParseDestination(fmt.Sprintf("%v/%v", a.Destination, target))
@@ -48,11 +47,11 @@ func (a *Command) Run() error {
 
 		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget.Path)
 
-		err = internal.SyncBackup(source, destinationTarget.Path)
+		err = syncBackup(source, destinationTarget.Path)
 		if err != nil {
 			errs := []error{err}
 			if destinationLast != "" {
-				err := internal.Clean(destinationTarget, destinationLast)
+				err := clean(destinationTarget, destinationLast)
 				if err != nil {
 					errs = append(errs, err)
 				}

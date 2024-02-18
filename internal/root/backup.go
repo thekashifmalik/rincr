@@ -1,17 +1,19 @@
-package internal
+package root
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
+
+	"github.com/thekashifmalik/rincr/internal"
 )
 
-func SyncBackup(source string, destination string) error {
+func syncBackup(source string, destination string) error {
 	rsyncBinary, err := exec.LookPath("rsync")
 	if err != nil {
 		return fmt.Errorf("Cannot find rsync binary: %w", err)
 	}
-	cmd := exec.Command(rsyncBinary, "-hav", "--delete", "--exclude", BACKUPS_DIR, source+"/", destination)
+	cmd := exec.Command(rsyncBinary, "-hav", "--delete", "--exclude", internal.BACKUPS_DIR, source+"/", destination)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()
@@ -21,7 +23,7 @@ func SyncBackup(source string, destination string) error {
 	return nil
 }
 
-func Clean(destination *Destination, destinationLast string) error {
+func clean(destination *internal.Destination, destinationLast string) error {
 	if destination.RemoteHost == "" {
 		fmt.Printf("> Cleaning up: %v\n", destinationLast)
 		err := os.RemoveAll(destinationLast)
