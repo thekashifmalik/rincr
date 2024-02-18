@@ -26,7 +26,7 @@ func (c *Command) Run() error {
 	for _, destinationTarget := range c.DestinationTargets {
 		currentTime := time.Now()
 		destinationTarget := internal.ParseDestination(destinationTarget)
-		err := internal.Prune(destinationTarget, currentTime)
+		err := Prune(destinationTarget, currentTime)
 		if err != nil {
 			return err
 		}

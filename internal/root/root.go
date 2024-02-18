@@ -9,6 +9,7 @@ import (
 
 	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/args"
+	"github.com/thekashifmalik/rincr/internal/prune"
 )
 
 type Command struct {
@@ -63,7 +64,7 @@ func (a *Command) Run() error {
 		internal.WriteLastFile(timeString, destinationTarget)
 
 		if a.Prune {
-			err := internal.Prune(destinationTarget, currentTime)
+			err := prune.Prune(destinationTarget, currentTime)
 			if err != nil {
 				return err
 			}
