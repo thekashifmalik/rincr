@@ -61,7 +61,7 @@ func (a *Command) Run() error {
 		}
 
 		timeString := currentTime.Format(internal.TIME_FORMAT)
-		internal.WriteLastFile(timeString, destinationTarget)
+		writeLastFile(timeString, destinationTarget)
 
 		if a.Prune {
 			err := prune.Prune(destinationTarget, currentTime)
