@@ -41,7 +41,7 @@ func (a *Command) Run() error {
 		currentTime := time.Now()
 		target := filepath.Base(source)
 		destinationTarget := internal.ParseDestination(fmt.Sprintf("%v/%v", a.Destination, target))
-		destinationLast, err := internal.RotateLastBackup(destinationTarget)
+		destinationLast, err := rotateLastBackup(destinationTarget)
 		if err != nil {
 			return err
 		}
