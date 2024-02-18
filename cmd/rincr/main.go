@@ -8,7 +8,6 @@ import (
 	"github.com/thekashifmalik/rincr/internal/backup"
 	"github.com/thekashifmalik/rincr/internal/help"
 	"github.com/thekashifmalik/rincr/internal/prune"
-	"github.com/thekashifmalik/rincr/internal/root"
 	"github.com/thekashifmalik/rincr/internal/version"
 )
 
@@ -47,7 +46,7 @@ func run() error {
 		}
 		return cmd.Run()
 	}
-	cmd, err := root.Parse(parsedArgs)
+	cmd, err := backup.ParseRoot(parsedArgs)
 	if err != nil {
 		return err
 	}
