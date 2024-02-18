@@ -8,7 +8,7 @@ import (
 	"github.com/thekashifmalik/rincr/internal/version"
 )
 
-func TestParseVersion(t *testing.T) {
+func TestArgExists(t *testing.T) {
 	require.False(t, version.ArgExists([]string{}))
 	require.False(t, version.ArgExists([]string{"--random"}))
 	require.False(t, version.ArgExists([]string{"-v"}))

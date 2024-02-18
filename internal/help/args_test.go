@@ -7,7 +7,7 @@ import (
 	"github.com/thekashifmalik/rincr/internal/help"
 )
 
-func TestParseHelp(t *testing.T) {
+func TestArgExists(t *testing.T) {
 	require.False(t, help.ArgExists([]string{}))
 	require.False(t, help.ArgExists([]string{"--random"}))
 	require.False(t, help.ArgExists([]string{"--random", "--other"}))
