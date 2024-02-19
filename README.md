@@ -37,8 +37,8 @@ A reimplementation of the ideas in `rsnapshot` built with the composibility and 
 utility is meant to compliment `rsync` for backups. While `rsync` can be used to make _mirrored_ backups `rincr` can be
 used to make _incremental_ backups which consist of a mirror and historical snapshots of the target data. These
 snapshots are taken whenever data is backed up and this can be done as often as needed as it is cheap both in time and
-space. `rincr` can also manage these snapshots, restore files to earlier versions (NOT IMPLEMENTED YET) and encrypt
-backups (NOT IMPLEMENTED YET).
+space. `rincr` can also manage these snapshots, restore files to earlier versions and encrypt backups (NOT IMPLEMENTED
+YET).
 
 ## Features
 `rincr` is built on top of `rsync` and borrows heavily from `rsnapshot`.
@@ -108,6 +108,16 @@ rincr server1:~/mydata server2:~/otherdata ~/backups
 
 This will create incremental backups in `~/backups/mydata` and `~/backups/otherdata`.
 
+To restore files from a backed-up repository, we can use:
+
+```bash
+rincr restore myserver:backups/mydata path-to-restore path-to-ouput
+```
+
+`rincr` will check backups from latest to oldest until it finds a matching file path. it wil then copy that path
+recursively into the output location. We use `rsync`` for this so only necesary files are transferred over. We can also
+configure how old of a file we want to fetch [NOT IMPLEMENTED YET].
+
 
 ## Demo
 
@@ -138,7 +148,7 @@ $ ssh desktop-1 ls ~/Backups/mydata/.rincr
 # Overriding default rentention
 rincr --rentention 30d ~/mydata myserver:~/backups
 
-# Restoring files
+# Configurable file restore
 rincr restore --from 1w myserver:~/backups/mydata/file ~/mydata/file
 
 # File encryption - supports deduplication but less secure
