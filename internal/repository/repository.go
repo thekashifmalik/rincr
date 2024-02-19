@@ -46,6 +46,10 @@ func (r *Repository) parse() []string {
 	return strings.SplitN(r.path, ":", 2)
 }
 
+func (r *Repository) GetFullPath() string {
+	return r.path
+}
+
 func (r *Repository) PathExists(path string) bool {
 	filePath := r.GetPath() + "/" + path
 	if r.IsRemote() {

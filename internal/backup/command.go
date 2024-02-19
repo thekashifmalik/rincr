@@ -55,7 +55,7 @@ func (a *Command) Run() error {
 
 		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget.Path)
 
-		err = rsync.Run(source+"/", destinationTarget.Path)
+		err = rsync.RunWithDelete(source+"/", destinationTarget.Path)
 		if err != nil {
 			errs := []error{err}
 			if destinationLast != "" {
