@@ -9,7 +9,7 @@ import (
 
 type Command struct {
 	Respository string
-	Path        string
+	Paths       []string
 	Output      string
 }
 
@@ -24,14 +24,15 @@ func Parse(args *args.Parsed) (*Command, error) {
 	if len(args.Params) < 3 {
 		return nil, fmt.Errorf("No output provided")
 	}
+	numParams := len(args.Params)
 	return &Command{
 		Respository: args.Params[0],
-		Path:        args.Params[1],
-		Output:      args.Params[2],
+		Paths:       args.Params[1 : numParams-1],
+		Output:      args.Params[numParams-1],
 	}, nil
 }
 
 func (c *Command) Run() error {
 	repo := repository.NewRepository(c.Respository)
-	return Restore(repo, c.Path, c.Output)
+	return Restore(repo, c.Paths, c.Output)
 }
