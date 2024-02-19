@@ -14,12 +14,12 @@ func Restore(repo *repository.Repository, paths []string, output string) error {
 		return fmt.Errorf("No repository found")
 	}
 
+	sources := []string{}
 	for _, path := range paths {
 		restorePath := ""
 		if repo.PathExists(path) {
 			restorePath = path
 		} else {
-			fmt.Println("Path not found in latest backup, checking historical backups")
 			backupTimes, err := repo.GetBackupTimes()
 			if err != nil {
 				return err
@@ -27,7 +27,6 @@ func Restore(repo *repository.Repository, paths []string, output string) error {
 			slices.Reverse(backupTimes)
 			for _, backupTime := range backupTimes {
 				timestamp := backupTime.Format(internal.TIME_FORMAT)
-				fmt.Printf("Checking: %v\n", timestamp)
 				historicalPath := fmt.Sprintf("%v/%v/%v", internal.BACKUPS_DIR, timestamp, path)
 				if repo.PathExists(historicalPath) {
 					restorePath = historicalPath
@@ -35,15 +34,18 @@ func Restore(repo *repository.Repository, paths []string, output string) error {
 				}
 			}
 			if restorePath == "" {
-				return fmt.Errorf("Path not found")
+				fmt.Printf("Skipped: %v\n", path)
+				continue
 			}
 		}
-		source := fmt.Sprintf("%v/%v", repo.GetFullPath(), restorePath)
-		err := rsync.Run(source, output)
-		if err != nil {
-			return err
+		if restorePath == path {
+			fmt.Printf("Found: %v\n", path)
+		} else {
+			fmt.Printf("Found: %v @ %v\n", path, restorePath)
 		}
-
+		source := fmt.Sprintf("%v/%v", repo.GetFullPath(), restorePath)
+		sources = append(sources, source)
 	}
-	return nil
+	args := append(sources, output)
+	return rsync.Run(args...)
 }

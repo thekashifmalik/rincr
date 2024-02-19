@@ -8,12 +8,21 @@ import (
 	"github.com/thekashifmalik/rincr/internal"
 )
 
-func Run(source string, destination string) error {
-	return run("-hav", "--exclude", internal.BACKUPS_DIR, source, destination)
+var OPTIONS = []string{"-hav", "--exclude", internal.BACKUPS_DIR}
+
+func Run(params ...string) error {
+	args := []string{}
+	args = append(args, OPTIONS...)
+	args = append(args, params...)
+	return run(args...)
 }
 
-func RunWithDelete(source string, destination string) error {
-	return run("-hav", "--delete", "--exclude", internal.BACKUPS_DIR, source, destination)
+func RunWithDelete(params ...string) error {
+	args := []string{}
+	args = append(args, OPTIONS...)
+	args = append(args, "--delete")
+	args = append(args, params...)
+	return run(args...)
 }
 
 func run(args ...string) error {
