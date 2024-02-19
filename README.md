@@ -111,12 +111,20 @@ This will create incremental backups in `~/backups/mydata` and `~/backups/otherd
 To restore files from a backed-up repository, we can use:
 
 ```bash
-rincr restore myserver:backups/mydata path-to-restore path-to-ouput
+rincr restore myserver:backups/mydata path-to-restore output-path
 ```
 
-`rincr` will check backups from latest to oldest until it finds a matching file path. it wil then copy that path
-recursively into the output location. We use `rsync`` for this so only necesary files are transferred over. We can also
-configure how old of a file we want to fetch [NOT IMPLEMENTED YET].
+`rincr` will check backups from latest to oldest until it finds a matching path. It will then copy that path recursively
+into the output location. We can restore single files or full directory trees this way. Since `rsync` is used for the
+the underlying transfer, only necessary files are transferred. Mutiple paths can be restored in one go:
+
+
+```bash
+rincr restore myserver:backups/mydata file-1 file-2 output-path
+```
+
+Any paths that are not found will skipped. We can also configure how old of a file we want to fetch [NOT IMPLEMENTED
+YET].
 
 
 ## Demo
