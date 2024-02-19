@@ -11,6 +11,7 @@ import (
 	"github.com/thekashifmalik/rincr/internal/args"
 	"github.com/thekashifmalik/rincr/internal/prune"
 	"github.com/thekashifmalik/rincr/internal/repository"
+	"github.com/thekashifmalik/rincr/internal/rsync"
 )
 
 type Command struct {
@@ -54,7 +55,7 @@ func (a *Command) Run() error {
 
 		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget.Path)
 
-		err = syncBackup(source, destinationTarget.Path)
+		err = rsync.Run(source+"/", destinationTarget.Path)
 		if err != nil {
 			errs := []error{err}
 			if destinationLast != "" {
