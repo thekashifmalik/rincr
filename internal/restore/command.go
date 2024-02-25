@@ -14,6 +14,9 @@ type Command struct {
 }
 
 func Parse(args *args.Parsed) (*Command, error) {
+	if len(args.Params) == 0 {
+		return nil, fmt.Errorf("no subcommand")
+	}
 	args.LeftShift()
 	if len(args.Params) < 1 {
 		return nil, fmt.Errorf("No repository provided")
