@@ -69,13 +69,30 @@ storage space.
 rincr [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
 ```
 
+When this command is run `rincr` checks to see if there are existing backups at the destination. If there are, a copy of
+the latest backup is created using hard links. Then new changes (if any) are synced from the source.
+
+Incremental backups are kept at `DEST/SRC/.rincr`. They are fully browsable and take no extra space for files that have
+not changed between versions. Each file acts as a full-backup and can be copied back out manually to restore data to an
+older version.
+
+### Push Backups
+
 Create an incremental backup of `~/mydata` at the remote location `myserver:~/backups/mydata`:
 ```bash
 rincr ~/mydata myserver:~/backups
 ```
 
-When this command is run `rincr` checks to see if there are existing backups at the destination. If there are, a copy of
-the latest backup is created using hard links. Then new changes (if any) are synced from the source.
+### Pull Backups
+
+We can also back up locally from remote locations:
+```bash
+rincr server1:~/mydata server2:~/otherdata ~/backups
+```
+
+This will create incremental backups in `~/backups/mydata` and `~/backups/otherdata`.
+
+### Pruning
 
 If you also want to clean up older backups, pass the `--prune` option:
 ```bash
@@ -89,6 +106,7 @@ retention rules are:
 - 12 monthly backups
 - 10 yearly backups
 
+
 If you just want to prune backups without syncing new data, you can use:
 
 ```bash
@@ -97,16 +115,7 @@ rincr prune myserver:~/backups/mydata
 > **Note**: When pruning data you have to provide the path to the actual backup destination which includes the target
 > name `mydata`.
 
-Incremental backups are kept in `myserver:~/backups/mydata/.rincr`. They are fully browsable and take no extra space
-for files that have not changed between versions. Each file acts as a full-backup and can be copied back out manually to
-restore data to an older version.
-
-We can also back up locally from remote locations:
-```bash
-rincr server1:~/mydata server2:~/otherdata ~/backups
-```
-
-This will create incremental backups in `~/backups/mydata` and `~/backups/otherdata`.
+### Restoring Files
 
 To restore files from a backed-up repository, we can use:
 
