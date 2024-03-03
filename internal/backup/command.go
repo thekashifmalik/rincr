@@ -26,7 +26,6 @@ func Parse(args *args.Parsed) (*Command, error) {
 }
 
 func ParseRoot(args *args.Parsed) (*Command, error) {
-	prune := slices.Contains(args.Options, "--prune")
 	numParams := len(args.Params)
 	if numParams < 1 {
 		return nil, fmt.Errorf("No sources provided")
@@ -39,7 +38,7 @@ func ParseRoot(args *args.Parsed) (*Command, error) {
 	return &Command{
 		Sources:     sources,
 		Destination: destination,
-		Prune:       prune,
+		Prune:       slices.Contains(args.Options, "--prune"),
 	}, nil
 }
 
