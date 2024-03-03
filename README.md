@@ -120,7 +120,7 @@ rincr prune myserver:~/backups/mydata
 To restore files from a backed-up repository, we can use:
 
 ```bash
-rincr restore myserver:backups/mydata path-to-restore output-path
+rincr restore --latest myserver:backups/mydata path-to-restore output-path
 ```
 
 `rincr` will check backups from latest to oldest until it finds a matching path. It will then copy that path recursively
@@ -129,7 +129,7 @@ the underlying transfer, only necessary files are transferred. Mutiple paths can
 
 
 ```bash
-rincr restore myserver:backups/mydata file-1 file-2 output-path
+rincr restore --latest myserver:backups/mydata file-1 file-2 output-path
 ```
 
 Any paths that are not found will skipped. We can also configure how old of a file we want to fetch [NOT IMPLEMENTED
