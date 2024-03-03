@@ -9,34 +9,28 @@ import (
 	"github.com/thekashifmalik/rincr/internal/rsync"
 )
 
-func Restore(repo *repository.Repository, paths []string, output string) error {
+func Restore(repo *repository.Repository, paths []string, output string, latest bool) error {
+	if !latest {
+		return fmt.Errorf("must specify restore mode")
+	}
 	if !repo.Exists() {
 		return fmt.Errorf("No repository found")
 	}
 
 	sources := []string{}
 	for _, path := range paths {
-		restorePath := ""
-		if repo.PathExists(path) {
-			restorePath = path
-		} else {
-			backupTimes, err := repo.GetBackupTimes()
-			if err != nil {
-				return err
-			}
-			slices.Reverse(backupTimes)
-			for _, backupTime := range backupTimes {
-				timestamp := backupTime.Format(internal.TIME_FORMAT)
-				historicalPath := fmt.Sprintf("%v/%v/%v", internal.BACKUPS_DIR, timestamp, path)
-				if repo.PathExists(historicalPath) {
-					restorePath = historicalPath
-					break
-				}
-			}
-			if restorePath == "" {
-				fmt.Printf("Skipped: %v\n", path)
-				continue
-			}
+		var restorePath string
+		var ok bool
+		var err error
+		if latest {
+			restorePath, ok, err = findLatest(path, repo)
+		}
+		if err != nil {
+			return err
+		}
+		if !ok {
+			fmt.Printf("Skipped: %v\n", path)
+			continue
 		}
 		if restorePath == path {
 			fmt.Printf("Found: %v\n", path)
@@ -48,4 +42,23 @@ func Restore(repo *repository.Repository, paths []string, output string) error {
 	}
 	args := append(sources, output)
 	return rsync.Run(args...)
+}
+
+func findLatest(path string, repo *repository.Repository) (string, bool, error) {
+	if repo.PathExists(path) {
+		return path, true, nil
+	}
+	backupTimes, err := repo.GetBackupTimes()
+	if err != nil {
+		return "", false, err
+	}
+	slices.Reverse(backupTimes)
+	for _, backupTime := range backupTimes {
+		timestamp := backupTime.Format(internal.TIME_FORMAT)
+		historicalPath := fmt.Sprintf("%v/%v/%v", internal.BACKUPS_DIR, timestamp, path)
+		if repo.PathExists(historicalPath) {
+			return historicalPath, true, nil
+		}
+	}
+	return "", false, nil
 }
