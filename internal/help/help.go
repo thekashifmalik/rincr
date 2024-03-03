@@ -11,6 +11,9 @@ import (
 var HELP = fmt.Sprintf(`
 Usage:
   %[1]v [--prune] [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
+  %[1]v backup [--prune] [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
+  %[1]v restore [--latest] [[USER@]HOST:]SRC PATH... DEST
+  %[1]v prune [[USER@]HOST:]SRC...
   %[1]v (-h | --help)
   %[1]v --version
 
@@ -18,6 +21,7 @@ Options:
   -h --help     Show this screen.
   --version     Show version.
   --prune    	Prune backups after operation.
+  --latest    	Restore the latest version of a file, if found.
 `, internal.NAME)
 
 func Print(writer io.Writer) {
