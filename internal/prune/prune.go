@@ -44,7 +44,7 @@ func roundToYear(target time.Time) time.Time {
 func pruneStage(existingBackups []time.Time, currentTime time.Time, destination *internal.Destination, num int, period time.Duration) ([]time.Time, time.Time) {
 	checkTime := time.Time{}
 	prunedBackups := existingBackups
-	for i := 0; i < num; i++ {
+	for i := range num {
 		checkTime = currentTime.Add(time.Duration(i) * -period)
 		// fmt.Printf("> Checking %v: %v\n", period, checkTime)
 		// Gather backups that fit in this bucket
@@ -56,7 +56,7 @@ func pruneStage(existingBackups []time.Time, currentTime time.Time, destination 
 func pruneMonthly(existingBackups []time.Time, currentTime time.Time, destination *internal.Destination, num int) ([]time.Time, time.Time) {
 	checkTime := time.Time{}
 	prunedBackups := existingBackups
-	for i := 0; i < num; i++ {
+	for i := range num {
 		checkTime = currentTime.AddDate(0, -i, 0)
 		// fmt.Printf("> Checking monthly: %v\n", checkTime)
 		// Gather backups that fit in this bucket
@@ -68,7 +68,7 @@ func pruneMonthly(existingBackups []time.Time, currentTime time.Time, destinatio
 func pruneYearly(existingBackups []time.Time, currentTime time.Time, destination *internal.Destination, num int) ([]time.Time, time.Time) {
 	checkTime := time.Time{}
 	prunedBackups := existingBackups
-	for i := 0; i < num; i++ {
+	for i := range num {
 		checkTime = currentTime.AddDate(-i, 0, 0)
 		// fmt.Printf("> Checking yearly: %v\n", checkTime)
 		// Gather backups that fit in this bucket
