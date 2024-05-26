@@ -1,8 +1,24 @@
 # rincr
-`rsync`-based incremental backups.
+Tool to make **r**emote-**incr**emental backups which consist of a mirror and historical snapshots of the target data.
+These snapshots can be taken as often as needed and are cheap both in time and space. `rincr` can also manage these
+snapshots, restore files to earlier versions and encrypt backups (NOT IMPLEMENTED YET).
 
 > **Note**: This project was previously called *kbackup*. See this [issue](https://github.com/thekashifmalik/kbackup/issues/2)
 > for more information.
+
+## Quickstart
+`rincr` supports a similar interface to `rsync`:
+
+```
+rincr [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
+```
+
+When this command is run `rincr` checks to see if there are existing backups at the destination. If there are, a copy of
+the latest backup is created using hard links. Then new changes (if any) are synced from the source.
+
+Incremental backups are kept at `DEST/SRC/.rincr`. They are fully browsable and take no extra space for files that have
+not changed between versions. Each file acts as a full-backup and can be copied back out manually to restore data to an
+older version.
 
 ## Installation
 Download the right binary for your OS and Architecture (all binaries available on [Github](https://github.com/thekashifmalik/rincr/releases)):
@@ -25,49 +41,8 @@ rincr --version
 > **Note**: This software is not yet stable; there may be backwards-incompatible changes before v1. Use at your own
 > risk.
 
-## About
-A reimplementation of the ideas in `rsnapshot` built with the composibility and simplicity of `rsync` in-mind. This
-utility is meant to compliment `rsync` for backups. While `rsync` can be used to make _mirrored_ backups `rincr` can be
-used to make _incremental_ backups which consist of a mirror and historical snapshots of the target data. These
-snapshots are taken whenever data is backed up and this can be done as often as needed as it is cheap both in time and
-space. `rincr` can also manage these snapshots, restore files to earlier versions and encrypt backups (NOT IMPLEMENTED
-YET).
 
 ## Features
-`rincr` is built on top of `rsync` and borrows heavily from `rsnapshot`.
-
-### Incremental
-Whenever `rincr` is run a copy of the last backup is stored in `.rincr`. Backups are fully browsable.
-
-### Differential
-`rincr` uses `rsync` so only the actual differences between files are sent over-the-wire.
-
-### Deduplicated
-`rincr` uses the same hard-link mechanism that `rsnapshot` uses so unchanged files between snapshots do not use any
-storage space.
-
-### Bidirectional
-`rincr` can backup from (pull) or to (push) a remote location, just like `rsync`.
-
-### Encrypted
-`rincr` uses `rsync` and `ssh` so all communication is encrypted. Addtionally backups can be encrypted on disk
-(NOT IMPLEMENTED YET).
-
-
-
-## Quickstart
-`rincr` supports a similar interface to `rsync`:
-
-```
-rincr [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
-```
-
-When this command is run `rincr` checks to see if there are existing backups at the destination. If there are, a copy of
-the latest backup is created using hard links. Then new changes (if any) are synced from the source.
-
-Incremental backups are kept at `DEST/SRC/.rincr`. They are fully browsable and take no extra space for files that have
-not changed between versions. Each file acts as a full-backup and can be copied back out manually to restore data to an
-older version.
 
 ### Push Backups
 
