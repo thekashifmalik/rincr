@@ -5,16 +5,9 @@
 > for more information.
 
 ## Installation
-Grab the right binary for your OS and Architecture from [Github](https://github.com/thekashifmalik/rincr/releases).
-For *Linux* on *x86*:
-```bash
-curl -L https://github.com/thekashifmalik/rincr/releases/latest/download/rincr-linux-amd64 > rincr
-```
-
-For *MacOS* on *ARM*:
-```bash
-curl -L https://github.com/thekashifmalik/rincr/releases/latest/download/rincr-darwin-arm64 > rincr
-```
+Download the right binary for your OS and Architecture (all binaries available on [Github](https://github.com/thekashifmalik/rincr/releases)):
+- [Linux on x86](https://github.com/thekashifmalik/rincr/releases/latest/download/rincr-linux-amd64)
+- [MacOS on ARM](https://github.com/thekashifmalik/rincr/releases/latest/download/rincr-darwin-arm64)
 
 Make sure it is executable and then place it anywhere in your `$PATH`:
 
