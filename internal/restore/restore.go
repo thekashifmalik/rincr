@@ -3,16 +3,14 @@ package restore
 import (
 	"fmt"
 	"slices"
+	"time"
 
 	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/repository"
 	"github.com/thekashifmalik/rincr/internal/rsync"
 )
 
-func Restore(repo *repository.Repository, paths []string, output string, latest bool) error {
-	if !latest {
-		return fmt.Errorf("must specify restore mode")
-	}
+func (c *Command) Restore(repo *repository.Repository, paths []string, output string, latest bool) error {
 	if !repo.Exists() {
 		return fmt.Errorf("No repository found")
 	}
@@ -22,8 +20,10 @@ func Restore(repo *repository.Repository, paths []string, output string, latest 
 		var restorePath string
 		var ok bool
 		var err error
-		if latest {
+		if c.Latest {
 			restorePath, ok, err = findLatest(path, repo)
+		} else if c.From {
+			restorePath, ok, err = findFrom(path, repo, c.FromValue)
 		}
 		if err != nil {
 			return err
@@ -66,4 +66,47 @@ func findLatest(path string, repo *repository.Repository) (string, bool, error) 
 		}
 	}
 	return "", false, nil
+}
+
+func findFrom(path string, repo *repository.Repository, fromValue string) (string, bool, error) {
+	duration, err := time.ParseDuration(fromValue)
+	if err != nil {
+		return "", false, err
+	}
+	target := time.Now().Add(-1 * duration)
+	fmt.Printf("Finding closest backup to: %v\n", target)
+
+	backupTimes, err := repo.GetBackupTimes()
+	if err != nil {
+		return "", false, err
+	}
+	slices.Reverse(backupTimes)
+	targetBackup, ok := findClosest(backupTimes, target)
+	if !ok {
+		return "", false, nil
+	}
+	fmt.Printf("Checking: %v \n", targetBackup)
+	timestamp := targetBackup.Format(internal.TIME_FORMAT)
+	historicalPath := fmt.Sprintf("%v/%v/%v", internal.BACKUPS_DIR, timestamp, path)
+	if repo.PathExists(historicalPath) {
+		return historicalPath, true, nil
+	}
+	return "", false, nil
+}
+
+func findClosest(backupTimes []time.Time, target time.Time) (*time.Time, bool) {
+	var minDistance time.Duration
+	var minDistanceTime *time.Time
+	for _, backupTime := range backupTimes {
+		distance := backupTime.Sub(target).Abs()
+		if distance < minDistance || minDistanceTime == nil {
+			minDistance = distance
+			minDistanceTime = &backupTime
+		}
+	}
+	if minDistanceTime == nil {
+		return nil, false
+	}
+	return minDistanceTime, true
+
 }
