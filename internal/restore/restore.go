@@ -40,11 +40,15 @@ func Restore(repo *repository.Repository, paths []string, output string, latest 
 		source := fmt.Sprintf("%v/%v", repo.GetFullPath(), restorePath)
 		sources = append(sources, source)
 	}
+	if len(sources) == 0 {
+		return nil
+	}
 	args := append(sources, output)
 	return rsync.Run(args...)
 }
 
 func findLatest(path string, repo *repository.Repository) (string, bool, error) {
+	fmt.Printf("Checking: mirror\n")
 	if repo.PathExists(path) {
 		return path, true, nil
 	}
@@ -54,6 +58,7 @@ func findLatest(path string, repo *repository.Repository) (string, bool, error) 
 	}
 	slices.Reverse(backupTimes)
 	for _, backupTime := range backupTimes {
+		fmt.Printf("Checking: %v \n", backupTime)
 		timestamp := backupTime.Format(internal.TIME_FORMAT)
 		historicalPath := fmt.Sprintf("%v/%v/%v", internal.BACKUPS_DIR, timestamp, path)
 		if repo.PathExists(historicalPath) {
