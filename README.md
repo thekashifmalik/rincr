@@ -100,8 +100,15 @@ the underlying transfer, only necessary files are transferred. Mutiple paths can
 rincr restore --latest myserver:backups/mydata file-1 file-2 output-path
 ```
 
-Any paths that are not found will skipped. We can also configure how old of a file we want to fetch [NOT IMPLEMENTED
-YET].
+Any paths that are not found will skipped. We can also configure how old of a backup we want to fetch:
+
+
+```bash
+rincr restore --from=12h myserver:backups/mydata path-to-restore output-path
+```
+
+It will find the closest backup to the given duration (from current time) and copy the path if it finds one.
+
 
 
 ## Demo
@@ -132,9 +139,6 @@ $ ssh desktop-1 ls ~/Backups/mydata/.rincr
 ```bash
 # Overriding default rentention
 rincr --rentention 30d ~/mydata myserver:~/backups
-
-# Configurable file restore
-rincr restore --from 1w myserver:~/backups/mydata/file ~/mydata/file
 
 # File encryption - supports deduplication but less secure
 rincr --encrypt ~/mydata myserver:~/backups
