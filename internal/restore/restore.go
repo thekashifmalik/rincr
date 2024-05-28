@@ -5,6 +5,8 @@ import (
 	"slices"
 	"time"
 
+	"github.com/xhit/go-str2duration/v2"
+
 	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/repository"
 	"github.com/thekashifmalik/rincr/internal/rsync"
@@ -69,7 +71,7 @@ func findLatest(path string, repo *repository.Repository) (string, bool, error) 
 }
 
 func findFrom(path string, repo *repository.Repository, fromValue string) (string, bool, error) {
-	duration, err := time.ParseDuration(fromValue)
+	duration, err := str2duration.ParseDuration(fromValue)
 	if err != nil {
 		return "", false, err
 	}
