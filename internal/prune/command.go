@@ -11,6 +11,10 @@ import (
 
 type Command struct {
 	DestinationTargets []string
+	Hourly             int
+	Daily              int
+	Monthly            int
+	Yearly             int
 }
 
 func Parse(args *args.Parsed) (*Command, error) {
@@ -18,8 +22,28 @@ func Parse(args *args.Parsed) (*Command, error) {
 	if len(args.Params) < 1 {
 		return nil, fmt.Errorf("No destination targets provided")
 	}
+	hourly, ok := args.GetOptionInt("hourly")
+	if !ok {
+		hourly = 24
+	}
+	daily, ok := args.GetOptionInt("daily")
+	if !ok {
+		daily = 30
+	}
+	monthly, ok := args.GetOptionInt("monthly")
+	if !ok {
+		monthly = 12
+	}
+	yearly, ok := args.GetOptionInt("yearly")
+	if !ok {
+		yearly = 10
+	}
 	return &Command{
 		DestinationTargets: args.Params,
+		Hourly:             hourly,
+		Daily:              daily,
+		Monthly:            monthly,
+		Yearly:             yearly,
 	}, nil
 }
 
@@ -33,7 +57,7 @@ func (c *Command) Run() error {
 			continue
 		}
 		destinationTarget := internal.ParseDestination(destinationTarget)
-		err := Prune(repo, destinationTarget, currentTime)
+		err := Prune(repo, destinationTarget, currentTime, c.Hourly, c.Daily, c.Monthly, c.Yearly)
 		if err != nil {
 			return err
 		}

@@ -83,6 +83,12 @@ rincr prune myserver:~/backups/mydata
 > **Note**: When pruning data you have to provide the path to the actual backup destination which includes the target
 > name `mydata`.
 
+If you want to override the default retention rules, you can use the options:
+
+```bash
+rincr --prune --hourly=12 --daily=15 --monthly=6 --yearly=5 ~/mydata myserver:~/backups
+```
+
 ### Restoring Files
 
 To restore files from a backed-up repository, we can use:

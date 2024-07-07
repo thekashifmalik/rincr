@@ -18,6 +18,10 @@ type Command struct {
 	Sources     []string
 	Destination string
 	Prune       bool
+	Hourly      int
+	Daily       int
+	Monthly     int
+	Yearly      int
 }
 
 func Parse(args *args.Parsed) (*Command, error) {
@@ -35,10 +39,31 @@ func ParseRoot(args *args.Parsed) (*Command, error) {
 	}
 	sources := args.Params[:numParams-1]
 	destination := args.Params[numParams-1]
+
+	hourly, ok := args.GetOptionInt("hourly")
+	if !ok {
+		hourly = 24
+	}
+	daily, ok := args.GetOptionInt("daily")
+	if !ok {
+		daily = 30
+	}
+	monthly, ok := args.GetOptionInt("monthly")
+	if !ok {
+		monthly = 12
+	}
+	yearly, ok := args.GetOptionInt("yearly")
+	if !ok {
+		yearly = 10
+	}
 	return &Command{
 		Sources:     sources,
 		Destination: destination,
 		Prune:       slices.Contains(args.Options, "--prune"),
+		Hourly:      hourly,
+		Daily:       daily,
+		Monthly:     monthly,
+		Yearly:      yearly,
 	}, nil
 }
 
@@ -72,7 +97,7 @@ func (a *Command) Run() error {
 		if a.Prune {
 			// TODO: Replace Destination with Repository.
 			repo := repository.NewRepository(destinationTarget.Path)
-			err := prune.Prune(repo, destinationTarget, currentTime)
+			err := prune.Prune(repo, destinationTarget, currentTime, a.Hourly, a.Daily, a.Monthly, a.Yearly)
 			if err != nil {
 				return err
 			}

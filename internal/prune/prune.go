@@ -11,17 +11,23 @@ import (
 	"github.com/thekashifmalik/rincr/internal/repository"
 )
 
-func Prune(repository *repository.Repository, destination *internal.Destination, currentTime time.Time) error {
+func Prune(
+	repository *repository.Repository,
+	destination *internal.Destination,
+	currentTime time.Time,
+	hourly, daily, monthly, yearly int,
+) error {
 	existingBackups, err := repository.GetBackupTimes()
 	if err != nil {
 		return err
 	}
 	// Go through time buckets, keeping only the oldest backup from each bucket.
 	fmt.Printf("> Pruning backups in: %v\n", destination.Path+internal.BACKUPS_DIR_PATH)
-	pruned, checkedTill := pruneStage(existingBackups, roundToHour(currentTime.Add(-time.Hour)), destination, 23, time.Hour)
-	pruned, checkedTill = pruneStage(pruned, roundToDay(checkedTill), destination, 30, 24*time.Hour)
-	pruned, checkedTill = pruneMonthly(pruned, roundToMonth(checkedTill), destination, 12)
-	pruned, checkedTill = pruneYearly(pruned, roundToYear(checkedTill), destination, 10)
+	pruned, checkedTill := pruneStage(existingBackups, roundToHour(currentTime.Add(-time.Hour)), destination, hourly-1, time.Hour)
+	pruned, checkedTill = pruneStage(pruned, roundToDay(checkedTill), destination, daily, 24*time.Hour)
+	pruned, checkedTill = pruneMonthly(pruned, roundToMonth(checkedTill), destination, monthly)
+	pruned, checkedTill = pruneYearly(pruned, roundToYear(checkedTill), destination, yearly)
+	deleteBackups(pruned, destination)
 	return nil
 }
 
@@ -95,7 +101,12 @@ func pruneBucket(existingBackups []time.Time, bucketTime time.Time, destination 
 	}
 	// Sort the backups and keep only the oldest one
 	slices.SortFunc(bucket, func(a, b time.Time) int { return a.Compare(b) })
-	for _, backupTime := range bucket[1:] {
+	deleteBackups(bucket[1:], destination)
+	return unseen
+}
+
+func deleteBackups(backups []time.Time, destination *internal.Destination) {
+	for _, backupTime := range backups {
 		fmt.Printf("> Pruning: %v\n", backupTime)
 		// TODO: Handle any errors here
 		if destination.RemoteHost == "" {
@@ -105,5 +116,4 @@ func pruneBucket(existingBackups []time.Time, bucketTime time.Time, destination 
 			exec.Command("ssh", destination.RemoteHost, "rm", "-rf", remotePath).Run()
 		}
 	}
-	return unseen
 }
