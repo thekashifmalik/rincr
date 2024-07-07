@@ -3,4 +3,4 @@ set -eo pipefail
 
 bin/clean
 bin/build
-gh release create `bin/version` --notes "" build/*
+gh release create `bin/version` --notes "`bin/version`" build/*
