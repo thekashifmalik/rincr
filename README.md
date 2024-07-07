@@ -142,9 +142,6 @@ $ ssh desktop-1 ls ~/Backups/mydata/.rincr
 ## Unimplemented
 
 ```bash
-# Overriding default rentention
-rincr --rentention 30d ~/mydata myserver:~/backups
-
 # File encryption - supports deduplication but less secure
 rincr --encrypt ~/mydata myserver:~/backups
 
