@@ -1,7 +1,7 @@
 # rincr
 Tool to make **r**emote-**incr**emental backups which consist of a mirror and historical snapshots of the target data.
-These snapshots can be taken as often as needed and are cheap both in time and space. `rincr` can also manage these
-snapshots, restore files to earlier versions and encrypt backups (NOT IMPLEMENTED YET).
+These snapshots can be taken as often as needed and are cheap both in time and space. `rincr` manages these snapshots,
+cleans up older snapshots and can restore files to earlier versions.
 
 > **Note**: This project was previously called *kbackup*. See this [issue](https://github.com/thekashifmalik/kbackup/issues/2)
 > for more information.
@@ -53,16 +53,15 @@ rincr ~/mydata myserver:~/backups
 
 ### Pull Backups
 
-We can also back up locally from remote locations:
+Create an incremental backup of `server1:~/mydata` & `server2:~/otherdata` at the local locations `~/backups/mydata` &
+`~/backups/otherdata` respectively:
 ```bash
 rincr server1:~/mydata server2:~/otherdata ~/backups
 ```
 
-This will create incremental backups in `~/backups/mydata` and `~/backups/otherdata`.
-
 ### Pruning
 
-If you also want to clean up older backups, pass the `--prune` option:
+If we want to clean up older backups, pass the `--prune` option:
 ```bash
 rincr --prune ~/mydata myserver:~/backups
 ```
