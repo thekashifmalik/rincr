@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-[[ -z "$@" ]] && echo "invalid release description" && exit 1
-
 bin/clean
 bin/build
-gh release create `bin/version` --notes "$@" build/*
+gh release create `bin/version` --notes "" build/*
