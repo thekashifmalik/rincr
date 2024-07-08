@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -112,4 +113,17 @@ func (r *Repository) GetBackupTimes() ([]time.Time, error) {
 		}
 	}
 	return backupTimes, nil
+}
+
+func (r *Repository) DeleteBackupsByTime(backupTimes []time.Time) {
+	for _, backupTime := range backupTimes {
+		fmt.Printf("deleting backup: %v\n", backupTime)
+		// TODO: Handle any errors here
+		backupPath := fmt.Sprintf("%v/%v/%v", r.GetPath(), internal.BACKUPS_DIR, backupTime.Format(internal.TIME_FORMAT))
+		if r.IsRemote() {
+			exec.Command("ssh", r.GetHost(), "rm", "-rf", backupPath).Run()
+		} else {
+			os.RemoveAll(backupPath)
+		}
+	}
 }

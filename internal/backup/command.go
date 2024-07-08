@@ -71,6 +71,7 @@ func (a *Command) Run() error {
 	for _, source := range a.Sources {
 		currentTime := time.Now()
 		target := filepath.Base(source)
+		// TODO: Replace Destination with Repository.
 		destinationTarget := internal.ParseDestination(fmt.Sprintf("%v/%v", a.Destination, target))
 		destinationLast, err := rotateLastBackup(destinationTarget)
 		if err != nil {
@@ -95,9 +96,8 @@ func (a *Command) Run() error {
 		writeLastFile(timeString, destinationTarget)
 
 		if a.Prune {
-			// TODO: Replace Destination with Repository.
 			repo := repository.NewRepository(destinationTarget.Path)
-			err := prune.Prune(repo, destinationTarget, currentTime, a.Hourly, a.Daily, a.Monthly, a.Yearly)
+			err := prune.Prune(repo, currentTime, a.Hourly, a.Daily, a.Monthly, a.Yearly)
 			if err != nil {
 				return err
 			}

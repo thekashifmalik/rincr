@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/thekashifmalik/rincr/internal"
 	"github.com/thekashifmalik/rincr/internal/args"
 	"github.com/thekashifmalik/rincr/internal/repository"
 )
@@ -56,8 +55,7 @@ func (c *Command) Run() error {
 			fmt.Printf("No repository found, skipping: %v\n", destinationTarget)
 			continue
 		}
-		destinationTarget := internal.ParseDestination(destinationTarget)
-		err := Prune(repo, destinationTarget, currentTime, c.Hourly, c.Daily, c.Monthly, c.Yearly)
+		err := Prune(repo, currentTime, c.Hourly, c.Daily, c.Monthly, c.Yearly)
 		if err != nil {
 			return err
 		}
