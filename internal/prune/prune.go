@@ -1,7 +1,6 @@
 package prune
 
 import (
-	"fmt"
 	"slices"
 	"time"
 
@@ -9,7 +8,6 @@ import (
 )
 
 func Prune(repo *repository.Repository, currentTime time.Time, config *Config) error {
-	fmt.Printf("pruning: %v\n", repo.GetFullPath())
 	existingBackups, err := repo.GetBackupTimes()
 	if err != nil {
 		return err

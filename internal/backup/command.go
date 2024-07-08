@@ -47,6 +47,7 @@ func ParseRoot(args *args.Parsed) (*Command, error) {
 
 func (a *Command) Run() error {
 	for _, source := range a.Sources {
+		fmt.Printf("backing up: %v\n", source)
 		currentTime := time.Now()
 		target := filepath.Base(source)
 		// TODO: Replace Destination with Repository.
@@ -55,8 +56,6 @@ func (a *Command) Run() error {
 		if err != nil {
 			return err
 		}
-
-		fmt.Printf("> Backing up: %v -> %v\n", source, destinationTarget.Path)
 
 		err = rsync.RunWithDelete(source+"/", destinationTarget.Path)
 		if err != nil {

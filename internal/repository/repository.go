@@ -117,9 +117,10 @@ func (r *Repository) GetBackupTimes() ([]time.Time, error) {
 
 func (r *Repository) DeleteBackupsByTime(backupTimes []time.Time) {
 	for _, backupTime := range backupTimes {
-		fmt.Printf("deleting backup: %v\n", backupTime)
+		formatted := backupTime.Format(internal.TIME_FORMAT)
+		fmt.Printf("pruning: %v\n", formatted)
+		backupPath := fmt.Sprintf("%v/%v/%v", r.GetPath(), internal.BACKUPS_DIR, formatted)
 		// TODO: Handle any errors here
-		backupPath := fmt.Sprintf("%v/%v/%v", r.GetPath(), internal.BACKUPS_DIR, backupTime.Format(internal.TIME_FORMAT))
 		if r.IsRemote() {
 			exec.Command("ssh", r.GetHost(), "rm", "-rf", backupPath).Run()
 		} else {

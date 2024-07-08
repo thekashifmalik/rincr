@@ -20,12 +20,12 @@ func rotateLastBackup(dest *internal.Destination) (string, error) {
 		var destinationLast string
 		b, err := os.ReadFile(destination + internal.LAST_FILE_PATH)
 		if err != nil {
-			fmt.Println("> No existing backups")
+			fmt.Println("no existing backups")
 			return "", nil
 		}
 		last := string(b)
 		destinationLast = fmt.Sprintf("%v/%v/%v", destination, internal.BACKUPS_DIR, last)
-		fmt.Printf("> Rotating last backup: %v\n", destinationLast)
+		fmt.Printf("rotating: %v\n", last)
 		err = os.MkdirAll(destinationLast, os.ModePerm)
 		if err != nil {
 			return destinationLast, err
@@ -60,7 +60,7 @@ func rotateLastBackup(dest *internal.Destination) (string, error) {
 			return "", nil
 		}
 		destinationLast = fmt.Sprintf("%v/%v/%v", destination, internal.BACKUPS_DIR, last)
-		fmt.Printf("> Rotating last backup: %v\n", destinationLast)
+		fmt.Printf("rotating: %v\n", last)
 		cmd := exec.Command("ssh", dest.RemoteHost, "mkdir", "-p", destinationLast)
 		cmd.Stderr = os.Stderr
 		err = cmd.Run()
