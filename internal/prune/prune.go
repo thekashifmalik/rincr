@@ -8,21 +8,17 @@ import (
 	"github.com/thekashifmalik/rincr/internal/repository"
 )
 
-func Prune(
-	repo *repository.Repository,
-	currentTime time.Time,
-	hourly, daily, monthly, yearly int,
-) error {
+func Prune(repo *repository.Repository, currentTime time.Time, config *Config) error {
 	fmt.Printf("pruning: %v\n", repo.GetFullPath())
 	existingBackups, err := repo.GetBackupTimes()
 	if err != nil {
 		return err
 	}
 	// Go through time buckets, keeping only the oldest backup from each bucket.
-	pruned, checkedTill := pruneStage(existingBackups, roundToHour(currentTime.Add(-time.Hour)), repo, hourly-1, time.Hour)
-	pruned, checkedTill = pruneStage(pruned, roundToDay(checkedTill), repo, daily, 24*time.Hour)
-	pruned, checkedTill = pruneMonthly(pruned, roundToMonth(checkedTill), repo, monthly)
-	pruned, checkedTill = pruneYearly(pruned, roundToYear(checkedTill), repo, yearly)
+	pruned, checkedTill := pruneStage(existingBackups, roundToHour(currentTime.Add(-time.Hour)), repo, config.Hourly-1, time.Hour)
+	pruned, checkedTill = pruneStage(pruned, roundToDay(checkedTill), repo, config.Daily, 24*time.Hour)
+	pruned, checkedTill = pruneMonthly(pruned, roundToMonth(checkedTill), repo, config.Monthly)
+	pruned, checkedTill = pruneYearly(pruned, roundToYear(checkedTill), repo, config.Yearly)
 	repo.DeleteBackupsByTime(pruned)
 	return nil
 }
