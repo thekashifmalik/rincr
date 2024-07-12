@@ -1,7 +1,7 @@
 # rincr
 Tool to make **r**emote-**incr**emental backups which consist of a mirror and historical snapshots of the target data.
-These snapshots can be taken as often as needed and are cheap both in time and space. `rincr` can manage these
-snapshots, clean up unnecesary data and also restore files to earlier versions.
+These snapshots are created using hard links and can be taken as often as needed as they are cheap both in time and
+space. `rincr` can manage these snapshots, clean up unnecesary data and also restore files to earlier versions.
 
 > **Note**: This project was previously called *kbackup*. See this [issue](https://github.com/thekashifmalik/kbackup/issues/2)
 > for more information.
