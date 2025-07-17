@@ -20,6 +20,11 @@ func main() {
 	}
 }
 
+// Command is a simple interface that all commands must implement. This makes it easier to run commands dynamically.
+type Command interface {
+	Run() error
+}
+
 func run() error {
 	if version.ArgExists(os.Args) {
 		version.PrintWithName(os.Stdout)
@@ -34,31 +39,29 @@ func run() error {
 		help.Print(os.Stdout)
 		return nil
 	}
+	var cmd Command
+	cmd, err = backup.ParseRoot(parsedArgs)
+	if err != nil {
+		return err
+	}
 	if len(parsedArgs.Params) > 0 {
 		switch parsedArgs.Params[0] {
 		case "backup":
-			cmd, err := backup.Parse(parsedArgs)
+			cmd, err = backup.Parse(parsedArgs)
 			if err != nil {
 				return err
 			}
-			return cmd.Run()
 		case "prune":
-			cmd, err := prune.Parse(parsedArgs)
+			cmd, err = prune.Parse(parsedArgs)
 			if err != nil {
 				return err
 			}
-			return cmd.Run()
 		case "restore":
-			cmd, err := restore.Parse(parsedArgs)
+			cmd, err = restore.Parse(parsedArgs)
 			if err != nil {
 				return err
 			}
-			return cmd.Run()
 		}
-	}
-	cmd, err := backup.ParseRoot(parsedArgs)
-	if err != nil {
-		return err
 	}
 	return cmd.Run()
 }
