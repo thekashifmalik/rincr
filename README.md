@@ -1,24 +1,26 @@
 # rincr
 Tool to make **r**emote-**incr**emental backups which consist of a mirror and historical snapshots of the target data.
 These snapshots are created using hard links and can be taken as often as needed as they are cheap both in time and
-space. `rincr` can manage these snapshots, clean up unnecesary data and also restore files to earlier versions.
+space. `rincr` can manage these snapshots, clean up unnecessary data and also restore files to earlier versions.
 
 > **Note**: This project was previously called *kbackup*. See this [issue](https://github.com/thekashifmalik/kbackup/issues/2)
 > for more information.
 
 ## Quickstart
-`rincr` supports a similar interface to `rsync`:
+Create incremental backups with a simple command:
 
+```bash
+# Backup local folder to remote server
+rincr ~/mydata user@server:~/backups
+
+# Backup remote folder to local directory
+rincr user@server:~/mydata ~/backups
+
+# Backup multiple sources
+rincr ~/docs ~/photos user@server:~/backups
 ```
-rincr [[USER@]HOST:]SRC... [[USER@]HOST:]DEST
-```
 
-When this command is run `rincr` checks to see if there are existing backups at the destination. If there are, a copy of
-the latest backup is created using hard links. Then new changes (if any) are synced from the source.
-
-Incremental backups are kept at `DEST/SRC/.rincr`. They are fully browsable and take no extra space for files that have
-not changed between versions. Each file acts as a full-backup and can be copied back out manually to restore data to an
-older version.
+`rincr` creates space-efficient snapshots using hard links. Each backup is a complete copy that you can browse and restore from directly. Historical snapshots are stored in `.rincr/` subdirectories at the destination.
 
 ## Installation
 Download the right binary for your OS and Architecture (all binaries available on [Github](https://github.com/thekashifmalik/rincr/releases)):
@@ -44,113 +46,73 @@ rincr --version
 
 ## Features
 
-### Push Backups
+### Backup Management
 
-Create an incremental backup of `~/mydata` at the remote location `myserver:~/backups/mydata`:
+Create backups with automatic pruning to manage disk space:
 ```bash
-rincr ~/mydata myserver:~/backups
-```
-
-### Pull Backups
-
-Create an incremental backup of `server1:~/mydata` & `server2:~/otherdata` at the local locations `~/backups/mydata` &
-`~/backups/otherdata` respectively:
-```bash
-rincr server1:~/mydata server2:~/otherdata ~/backups
-```
-
-### Pruning
-
-If we want to clean up older backups, pass the `--prune` option:
-```bash
+# Backup with default retention (24h, 30d, 12m, 10y)
 rincr --prune ~/mydata myserver:~/backups
-```
 
-This will apply the default retention rules and delete extra backups. Pruned backups will be printed out. The default
-retention rules are:
-- 24 hourly backups
-- 30 daily backups
-- 12 monthly backups
-- 10 yearly backups
-
-
-If you just want to prune backups without syncing new data, you can use:
-
-```bash
-rincr prune myserver:~/backups/mydata
-```
-> **Note**: When pruning data you have to provide the path to the actual backup destination which includes the target
-> name `mydata`.
-
-If you want to override the default retention rules, you can use the options:
-
-```bash
+# Custom retention rules
 rincr --prune --hourly=12 --daily=15 --monthly=6 --yearly=5 ~/mydata myserver:~/backups
 ```
 
-### Restoring Files
-
-To restore files from a backed-up repository, we can use:
-
+Prune existing backups without syncing new data:
 ```bash
-rincr restore --latest myserver:backups/mydata path-to-restore output-path
+rincr prune myserver:~/backups/mydata
 ```
 
-`rincr` will check backups from latest to oldest until it finds a matching path. It will then copy that path recursively
-into the output location. We can restore single files or full directory trees this way. Since `rsync` is used for the
-the underlying transfer, only necessary files are transferred. Mutiple paths can be restored in one go:
+> **Note**: When pruning, provide the full path including the target directory name.
 
+### File Restoration
+
+Restore files from any backup snapshot:
 
 ```bash
-rincr restore --latest myserver:backups/mydata file-1 file-2 output-path
+# Restore from latest backup
+rincr restore --latest myserver:~/backups/mydata path/to/file ~/restored/
+
+# Restore from specific time point
+rincr restore --from=12h myserver:~/backups/mydata path/to/file ~/restored/
+
+# Restore multiple files
+rincr restore --latest myserver:~/backups/mydata file1 file2 dir/ ~/restored/
 ```
 
-Any paths that are not found will skipped. We can also configure how old of a backup we want to fetch:
-
-
-```bash
-rincr restore --from=12h myserver:backups/mydata path-to-restore output-path
-```
-
-It will find the closest backup to the given duration (from current time) and copy the path if it finds one.
+Files are searched from newest to oldest backups. Only changed files are transferred using rsync.
 
 
 
-## Demo
+## Example
 
 ```bash
+# Initial state - source has files
 $ ls -A ~/mydata
-README.md new-file.txt
+README.md config.json
 
-$ ssh desktop-1 ls ~/Backups/mydata
+# Destination has previous backup
+$ ssh server ls ~/backups/mydata
 README.md .rincr
 
-$ ssh desktop-1 ls ~/Backups/mydata/.rincr
-2024-01-12T09-12-32 last
+$ ssh server ls ~/backups/mydata/.rincr
+2024-01-12T09-12-32/ last
 
-$ rincr ~/mydata desktop-1:~/Backups
-...
+# Run backup - new file gets synced
+$ rincr ~/mydata server:~/backups
+Rotating backup: 2024-01-12T09-12-32
+Syncing changes...
+Created snapshot: 2024-01-23T18-26-10
 
-$ ssh desktop-1 ls ~/Backups/mydata
-README.md new-file.txt .rincr
+# New snapshot created, old one preserved
+$ ssh server ls ~/backups/mydata
+README.md config.json .rincr
 
-$ ssh desktop-1 ls ~/Backups/mydata/.rincr
-2024-01-12T09-12-32 2024-01-23T18-26-10 last
-```
-
-## Unimplemented
-
-```bash
-# File encryption - supports deduplication but less secure
-rincr --encrypt ~/mydata myserver:~/backups
-
-# Folder encryption - no deduplication but completely secure
-rincr --encrypt-folder ~/mydata myserver:~/backups
-
+$ ssh server ls ~/backups/mydata/.rincr
+2024-01-12T09-12-32/ 2024-01-23T18-26-10/ last
 ```
 
 ## References
-- [rsync](https://rsync.samba.org/)
-- [rsnapshot](https://rsnapshot.org/)
-- [Easy Automated Snapshot-Style Backups with Linux and Rsync](http://www.mikerubel.org/computers/rsync_snapshots/)
-- [WIP Blog](blog)
+- [rsync](https://rsync.samba.org/) - The underlying sync engine
+- [rsnapshot](https://rsnapshot.org/) - Inspiration for snapshot-style backups
+- [Easy Automated Snapshot-Style Backups with Linux and Rsync](http://www.mikerubel.org/computers/rsync_snapshots/) - Technical foundation
+- [Development Blog](blog) - Design decisions and implementation notes
