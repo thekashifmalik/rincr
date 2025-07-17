@@ -34,24 +34,27 @@ func run() error {
 		help.Print(os.Stdout)
 		return nil
 	}
-	if parsedArgs.Params[0] == "backup" {
-		cmd, err := backup.Parse(parsedArgs)
-		if err != nil {
-			return err
+	if len(parsedArgs.Params) > 0 {
+		switch parsedArgs.Params[0] {
+		case "backup":
+			cmd, err := backup.Parse(parsedArgs)
+			if err != nil {
+				return err
+			}
+			return cmd.Run()
+		case "prune":
+			cmd, err := prune.Parse(parsedArgs)
+			if err != nil {
+				return err
+			}
+			return cmd.Run()
+		case "restore":
+			cmd, err := restore.Parse(parsedArgs)
+			if err != nil {
+				return err
+			}
+			return cmd.Run()
 		}
-		return cmd.Run()
-	} else if parsedArgs.Params[0] == "prune" {
-		cmd, err := prune.Parse(parsedArgs)
-		if err != nil {
-			return err
-		}
-		return cmd.Run()
-	} else if parsedArgs.Params[0] == "restore" {
-		cmd, err := restore.Parse(parsedArgs)
-		if err != nil {
-			return err
-		}
-		return cmd.Run()
 	}
 	cmd, err := backup.ParseRoot(parsedArgs)
 	if err != nil {
